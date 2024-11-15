@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/user/screens/registration_screen.dart'; // Import the RegistrationScreen for navigation
-import 'package:flutter_application_1/user/screens/home_screen.dart'; // Import the HomeScreen after login
+import 'package:flutter_application_1/user/screens/bottom_nav_screen.dart'; // Import the HomeScreen after login
 
 // LoginScreen widget where users can log in with their credentials
 class LoginScreen extends StatefulWidget {
@@ -50,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
         context,
         MaterialPageRoute(
             builder: (context) =>
-                HomeScreen()), // Replace HomeScreen with your actual home page widget
+                BottomNavScreen()), // Replace HomeScreen with your actual home page widget
       );
     }
   }
