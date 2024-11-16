@@ -66,6 +66,9 @@ flutter:
     - assets/bg3.jpg
     - assets/bg4.jpg
     - assets/bg5.jpeg
+    - assets/profile/aswanth.webp
+    - assets/profile/ajmal.webp
+    - assets/profile/sagar.jpg
    # - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

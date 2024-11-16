@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:flutter_application_1/user/screens/post_details_screen.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -9,27 +10,36 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final List<Map<String, dynamic>> posts = [
     {
-      'images': ['assets/bg2.jpg', 'assets/bg3.jpg'],
+      'images': ['assets/bg2.jpg', 'assets/bg3.jpg', 'assets/bg2.jpg'],
       'location': 'Paris, France',
       'locationDescription': 'The city of lights and love.',
       'tripDuration': '5 Days',
-      'userImage': 'assets/images/user1.jpg',
-      'userName': 'Alice Johnson',
+      'userImage': 'assets/profile/aswanth.webp',
+      'userName': 'Aswanth',
     },
     {
       'images': ['assets/bg4.jpg', 'assets/bg5.jpg'],
       'location': 'Kyoto, Japan',
       'locationDescription': 'A city of temples and traditions.',
       'tripDuration': '7 Days',
-      'userImage': 'assets/images/user2.jpg',
+      'userImage': 'assets/profile/sagar.jpg',
+      'userName': 'Sagar',
     },
     {
-      'images': ['assets/logo.jpg','assets/bg6.jpg', 'assets/bg7.jpg'],
+      'images': ['assets/logo.jpg', 'assets/bg6.jpg', 'assets/bg7.jpg'],
       'location': 'New York, USA',
       'locationDescription': 'The city that never sleeps.',
       'tripDuration': '3 Days',
-      'userImage': 'assets/images/user3.jpg',
-      'userName': 'John Smith',
+      'userImage': 'assets/profile/ajmal.webp',
+      'userName': 'Ajmal',
+    },
+    {
+      'images': ['assets/logo.jpg', 'assets/bg6.jpg', 'assets/bg7.jpg'],
+      'location': 'New York, USA',
+      'locationDescription': 'The city that never sleeps.',
+      'tripDuration': '3 Days',
+      'userImage': 'assets/profile/ajmal.webp',
+      'userName': 'Ajmal',
     },
   ];
 
@@ -37,6 +47,9 @@ class _HomePageState extends State<HomePage> {
   String filterDuration = '';
   List<Map<String, dynamic>> filteredPosts = [];
   bool isFilterVisible = false;
+
+  // Create a TextEditingController for the search bar
+  TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -70,28 +83,48 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void onSearchChanged(String query) {
+    setState(() {
+      filterLocation = query;
+      if (query.isEmpty) {
+        filteredPosts = posts;
+      } else {
+        filteredPosts = posts.where((post) {
+          return post['location'].toLowerCase().contains(query.toLowerCase());
+        }).toList();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home Page'),
+        title: Text('Explore'),
         actions: [
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {
-              showSearch(
-                context: context,
-                delegate: LocationSearchDelegate(
-                  posts: posts,
-                  onSearch: (String location) {
-                    setState(() {
-                      filterLocation = location;
-                      applyFilters();
-                    });
-                  },
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              width: 200,
+              child: TextField(
+                controller: _searchController, // Set the controller here
+                onChanged: onSearchChanged,
+                decoration: InputDecoration(
+                  hintText: 'Search by location',
+                  border: OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.clear),
+                    onPressed: () {
+                      setState(() {
+                        filterLocation = '';
+                        filteredPosts = posts;
+                        _searchController.clear(); // Clear the search text
+                      });
+                    },
+                  ),
                 ),
-              );
-            },
+              ),
+            ),
           ),
           IconButton(
             icon: Icon(Icons.filter_alt),
@@ -186,84 +219,6 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class LocationSearchDelegate extends SearchDelegate<String> {
-  final List<Map<String, dynamic>> posts;
-  final Function(String) onSearch;
-
-  LocationSearchDelegate({required this.posts, required this.onSearch});
-
-  @override
-  String get searchFieldLabel => 'Search by location';
-
-  @override
-  List<Widget> buildActions(BuildContext context) {
-    return [
-      IconButton(
-        icon: Icon(Icons.clear),
-        onPressed: () {
-          query = '';
-        },
-      ),
-    ];
-  }
-
-  @override
-  Widget buildLeading(BuildContext context) {
-    return IconButton(
-      icon: Icon(Icons.arrow_back),
-      onPressed: () {
-        close(context, '');
-      },
-    );
-  }
-
-  @override
-  Widget buildResults(BuildContext context) {
-    final results = posts.where((post) {
-      return post['location']
-          .toLowerCase()
-          .contains(query.toLowerCase());
-    }).toList();
-
-    return ListView.builder(
-      itemCount: results.length,
-      itemBuilder: (context, index) {
-        final post = results[index];
-        return ListTile(
-          title: Text(post['location']),
-          onTap: () {
-            onSearch(post['location']);
-            close(context, post['location']);
-          },
-        );
-      },
-    );
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    final suggestions = posts.where((post) {
-      return post['location']
-          .toLowerCase()
-          .contains(query.toLowerCase());
-    }).toList();
-
-    return ListView.builder(
-      itemCount: suggestions.length,
-      itemBuilder: (context, index) {
-        final post = suggestions[index];
-        return ListTile(
-          title: Text(post['location']),
-          onTap: () {
-            onSearch(post['location']);
-            close(context, post['location']);
-          },
-        );
-      },
-    );
-  }
-}
-
 class UserPost extends StatefulWidget {
   final int index;
   final List<String> images;
@@ -320,113 +275,104 @@ class _UserPostState extends State<UserPost> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Card(
-        elevation: 5,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+    return Card(
+      elevation: 5,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 20,
-                    backgroundImage: AssetImage(widget.userImage),
-                  ),
-                  SizedBox(width: 8),
-                  Text(widget.userName, style: TextStyle(fontWeight: FontWeight.bold)),
-                ],
-              ),
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 25,
+                  backgroundImage: AssetImage(widget.userImage),
+                ),
+                SizedBox(width: 10),
+                Text(
+                  widget.userName,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
-            Container(
-              height: 200,
-              child: Stack(
-                children: [
-                  PageView.builder(
-                    controller: _pageController,
-                    itemCount: widget.images.length,
-                    itemBuilder: (context, index) {
-                      return Image.asset(
-                        widget.images[index],
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                      );
-                    },
-                    onPageChanged: (int index) {
-                      setState(() {
-                        _currentPage = index;
-                      });
-                    },
-                  ),
-                  if (_currentPage > 0)
+            GestureDetector(
+              onTap: _nextImage,
+              child: Container(
+                height: 250,
+                child: Stack(
+                  children: [
+                    PageView.builder(
+                      controller: _pageController,
+                      itemCount: widget.images.length,
+                      onPageChanged: (int page) {
+                        setState(() {
+                          _currentPage = page;
+                        });
+                      },
+                      itemBuilder: (context, index) {
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(15), // Adjusting border radius
+                          child: Image.asset(
+                            widget.images[index],
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                          ),
+                        );
+                      },
+                    ),
                     Positioned(
                       left: 10,
                       top: 100,
-                      child: GestureDetector(
-                        onTap: _previousImage,
-                        child: CircleAvatar(
-                          radius: 20,
-                          backgroundColor: Colors.black.withOpacity(0.5),
-                          child: Icon(Icons.arrow_back, color: Colors.white),
-                        ),
+                      child: IconButton(
+                        icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+                        onPressed: _previousImage,
                       ),
                     ),
-                  if (_currentPage < widget.images.length - 1)
                     Positioned(
                       right: 10,
                       top: 100,
-                      child: GestureDetector(
-                        onTap: _nextImage,
-                        child: CircleAvatar(
-                          radius: 20,
-                          backgroundColor: Colors.black.withOpacity(0.5),
-                          child: Icon(Icons.arrow_forward, color: Colors.white),
-                        ),
+                      child: IconButton(
+                        icon: Icon(Icons.arrow_forward_ios, color: Colors.white),
+                        onPressed: _nextImage,
                       ),
                     ),
-                  SmoothPageIndicator(
-                    controller: _pageController,
-                    count: widget.images.length,
-                    effect: ExpandingDotsEffect(
-                      dotWidth: 8.0,
-                      dotHeight: 8.0,
-                      spacing: 4.0,
-                      activeDotColor: Colors.blue,
-                      dotColor: Colors.grey,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Location: ${widget.location}', style: TextStyle(fontWeight: FontWeight.bold)),
-                  SizedBox(height: 5),
-                  Text(widget.locationDescription, style: TextStyle(color: Colors.grey)),
-                  SizedBox(height: 5),
-                  Text('Duration: ${widget.tripDuration}', style: TextStyle(color: Colors.grey)),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Align(
-                alignment: Alignment.bottomRight,
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => PostDetailScreen(postIndex: widget.index)),
-                    );
-                  },
-                  child: Text('See Other Posts >', style: TextStyle(color: Colors.blue)),
+                  ],
                 ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                widget.location,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                widget.locationDescription,
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                widget.tripDuration,
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PostDetailScreen(postIndex: widget.index),
+                    ),
+                  );
+                },
+                child: Text('Show More', style: TextStyle(color: Colors.blue)),
               ),
             ),
           ],
@@ -436,20 +382,3 @@ class _UserPostState extends State<UserPost> {
   }
 }
 
-class PostDetailScreen extends StatelessWidget {
-  final int postIndex;
-
-  PostDetailScreen({required this.postIndex});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Post Detail #$postIndex'),
-      ),
-      body: Center(
-        child: Text('Full details of Post #$postIndex'),
-      ),
-    );
-  }
-}

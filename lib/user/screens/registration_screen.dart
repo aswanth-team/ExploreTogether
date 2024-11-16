@@ -152,7 +152,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     children: [
                       // Main Heading with enhanced styling
                       Text(
-                        'Explore Together',
+                        'Become a part of us',
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
@@ -164,16 +164,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               color: Colors.black.withOpacity(0.7),
                             ),
                           ],
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      // Subheading text
-                      Text(
-                        'Become a part of us',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w300,
-                          color: Colors.white,
                         ),
                       ),
                       SizedBox(height: 20),
@@ -302,7 +292,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               horizontal: 50, vertical: 15),
                         ),
                       ),
-                      SizedBox(height: 20),
+                      SizedBox(height: 10),
                       // Redirect to login page if user already has an account
                       TextButton(
                         onPressed: () {
