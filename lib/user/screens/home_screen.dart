@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:flutter_application_1/user/screens/post_details_screen.dart';
+import 'post_details_screen.dart';
+import 'users_profile_screen.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -10,14 +10,16 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final List<Map<String, dynamic>> posts = [
     {
+      'postId': 'post12345', // Added postId
       'images': ['assets/bg2.jpg', 'assets/bg3.jpg', 'assets/bg2.jpg'],
       'location': 'Paris, France',
       'locationDescription': 'The city of lights and love.',
       'tripDuration': '5 Days',
       'userImage': 'assets/profile/aswanth.webp',
-      'userName': 'Aswanth',
+      'userName': 'aswanth123',
     },
     {
+      'postId': '67890', // Added postId
       'images': ['assets/bg4.jpg', 'assets/bg5.jpg'],
       'location': 'Kyoto, Japan',
       'locationDescription': 'A city of temples and traditions.',
@@ -26,6 +28,7 @@ class _HomePageState extends State<HomePage> {
       'userName': 'Sagar',
     },
     {
+      'postId': '11223', // Added postId
       'images': ['assets/logo.jpg', 'assets/bg6.jpg', 'assets/bg7.jpg'],
       'location': 'New York, USA',
       'locationDescription': 'The city that never sleeps.',
@@ -34,6 +37,7 @@ class _HomePageState extends State<HomePage> {
       'userName': 'Ajmal',
     },
     {
+      'postId': '44556', // Added postId
       'images': ['assets/logo.jpg', 'assets/bg6.jpg', 'assets/bg7.jpg'],
       'location': 'New York, USA',
       'locationDescription': 'The city that never sleeps.',
@@ -61,9 +65,13 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       filteredPosts = posts.where((post) {
         bool matchesLocation = filterLocation.isEmpty ||
-            post['location'].toLowerCase().contains(filterLocation.toLowerCase());
+            post['location']
+                .toLowerCase()
+                .contains(filterLocation.toLowerCase());
         bool matchesDuration = filterDuration.isEmpty ||
-            post['tripDuration'].toLowerCase().contains(filterDuration.toLowerCase());
+            post['tripDuration']
+                .toLowerCase()
+                .contains(filterDuration.toLowerCase());
         return matchesLocation && matchesDuration;
       }).toList();
     });
@@ -139,7 +147,8 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.all(8.0),
               child: Card(
                 elevation: 5,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15)),
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Column(
@@ -176,20 +185,23 @@ class _HomePageState extends State<HomePage> {
                               resetFilters();
                               toggleFilterPopup();
                             },
-                            child: Text('Reset', style: TextStyle(color: Colors.red)),
+                            child: Text('Reset',
+                                style: TextStyle(color: Colors.red)),
                           ),
                           TextButton(
                             onPressed: () {
                               applyFilters();
                               toggleFilterPopup();
                             },
-                            child: Text('Apply', style: TextStyle(color: Colors.blue)),
+                            child: Text('Apply',
+                                style: TextStyle(color: Colors.blue)),
                           ),
                         ],
                       ),
                       TextButton(
                         onPressed: toggleFilterPopup,
-                        child: Text('Close', style: TextStyle(color: Colors.black)),
+                        child: Text('Close',
+                            style: TextStyle(color: Colors.black)),
                       ),
                     ],
                   ),
@@ -203,6 +215,7 @@ class _HomePageState extends State<HomePage> {
                 final post = filteredPosts[index];
                 return UserPost(
                   index: index,
+                  postId: post['postId'], // Pass postId here
                   images: post['images'],
                   location: post['location'],
                   locationDescription: post['locationDescription'],
@@ -221,6 +234,7 @@ class _HomePageState extends State<HomePage> {
 
 class UserPost extends StatefulWidget {
   final int index;
+  final String postId; // Add postId here
   final List<String> images;
   final String location;
   final String locationDescription;
@@ -230,6 +244,7 @@ class UserPost extends StatefulWidget {
 
   UserPost({
     required this.index,
+    required this.postId, // Accept postId in the constructor
     required this.images,
     required this.location,
     required this.locationDescription,
@@ -275,110 +290,138 @@ class _UserPostState extends State<UserPost> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 25,
-                  backgroundImage: AssetImage(widget.userImage),
+    return GestureDetector(
+      onTap: () {
+        // Navigate to the post details screen when the card is tapped
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PostDetailScreen(
+              postId: widget.postId, // Pass postId
+              username: widget.userName, // Pass userName
+            ),
+          ),
+        );
+      },
+      child: Card(
+        elevation: 5,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      // Navigating to the ProfilePage with the username parameter
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UsersProfilePage(
+                              username: widget.userName), // Passing username
+                        ),
+                      );
+                    },
+                    child: CircleAvatar(
+                      radius: 25,
+                      backgroundImage: AssetImage(widget.userImage),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  GestureDetector(
+                    onTap: () {
+                      // Navigating to the ProfilePage with the username parameter
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UsersProfilePage(
+                              username: widget.userName), // Passing username
+                        ),
+                      );
+                    },
+                    child: Text(
+                      widget.userName,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10),
+              GestureDetector(
+                onTap: _nextImage,
+                child: Container(
+                  height: 250,
+                  child: Stack(
+                    children: [
+                      PageView.builder(
+                        controller: _pageController,
+                        itemCount: widget.images.length,
+                        onPageChanged: (int page) {
+                          setState(() {
+                            _currentPage = page;
+                          });
+                        },
+                        itemBuilder: (context, index) {
+                          return ClipRRect(
+                            borderRadius: BorderRadius.circular(15),
+                            child: Image.asset(
+                              widget.images[index],
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                            ),
+                          );
+                        },
+                      ),
+                      Positioned(
+                        left: 10,
+                        top: 100,
+                        child: IconButton(
+                          icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+                          onPressed: _previousImage,
+                        ),
+                      ),
+                      Positioned(
+                        right: 10,
+                        top: 100,
+                        child: IconButton(
+                          icon: Icon(Icons.arrow_forward_ios,
+                              color: Colors.white),
+                          onPressed: _nextImage,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                SizedBox(width: 10),
-                Text(
-                  widget.userName,
+              ),
+              // Reduced padding here to decrease the gap
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Text(
+                  widget.location,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-              ],
-            ),
-            GestureDetector(
-              onTap: _nextImage,
-              child: Container(
-                height: 250,
-                child: Stack(
-                  children: [
-                    PageView.builder(
-                      controller: _pageController,
-                      itemCount: widget.images.length,
-                      onPageChanged: (int page) {
-                        setState(() {
-                          _currentPage = page;
-                        });
-                      },
-                      itemBuilder: (context, index) {
-                        return ClipRRect(
-                          borderRadius: BorderRadius.circular(15), // Adjusting border radius
-                          child: Image.asset(
-                            widget.images[index],
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                          ),
-                        );
-                      },
-                    ),
-                    Positioned(
-                      left: 10,
-                      top: 100,
-                      child: IconButton(
-                        icon: Icon(Icons.arrow_back_ios, color: Colors.white),
-                        onPressed: _previousImage,
-                      ),
-                    ),
-                    Positioned(
-                      right: 10,
-                      top: 100,
-                      child: IconButton(
-                        icon: Icon(Icons.arrow_forward_ios, color: Colors.white),
-                        onPressed: _nextImage,
-                      ),
-                    ),
-                  ],
+              ),
+              // Reduced padding here to decrease the gap
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Text(
+                  widget.locationDescription,
+                  style: TextStyle(color: Colors.grey),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                widget.location,
-                style: TextStyle(fontWeight: FontWeight.bold),
+              // Reduced padding here to decrease the gap
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Text(
+                  widget.tripDuration,
+                  style: TextStyle(color: Colors.grey),
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                widget.locationDescription,
-                style: TextStyle(color: Colors.grey),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                widget.tripDuration,
-                style: TextStyle(color: Colors.grey),
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PostDetailScreen(postIndex: widget.index),
-                    ),
-                  );
-                },
-                child: Text('Show More', style: TextStyle(color: Colors.blue)),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
-

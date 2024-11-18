@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
-import 'post_screen.dart';     // Import PostPage
-import 'search_screen.dart';  // Import SearchPage
-import 'home_screen.dart';    // Import HomePage
-import 'chat_screen.dart';    // Import ChatPage
-import 'profile_screen.dart'; // Import ProfilePage
+import 'post_screen.dart'; // Import PostPage
+import 'search_screen.dart'; // Import SearchPage
+import 'home_screen.dart'; // Import HomePage
+import 'chat_screen.dart' as chat;
+import 'profile_screen.dart' as profile;
+
+// When referring to `ChatPage`, use the alias like this:
+// for the one in chat_screen.dart // for the one in profile_screen.dart
+// Import ProfilePage
 
 class BottomNavScreen extends StatefulWidget {
   @override
@@ -18,8 +22,8 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     PostPage(),
     SearchPage(),
     HomePage(),
-    ChatPage(),
-    ProfilePage(),
+    chat.ChatPage(),
+    profile.ProfilePage(),
   ];
 
   // Function to switch between tabs
