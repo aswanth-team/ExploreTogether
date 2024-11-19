@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'post_details_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+void main() => runApp(MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: UsersProfilePage(username: 'aswanth123'), // Pass the username here
+    ));
 
 class UsersProfilePage extends StatefulWidget {
-  final String username; // Accept the username from the previous screen
+  final String username;
 
   UsersProfilePage({required this.username});
 
@@ -12,529 +19,708 @@ class UsersProfilePage extends StatefulWidget {
 }
 
 class _UsersProfilePageState extends State<UsersProfilePage> {
-  bool isBioExpanded =
-      false; // Controls the expansion of the bio and other details
+  bool showPosts = true; // Initially, show posts
+
+  // Mock data for users
   final List<Map<String, dynamic>> users = [
     {
       "userImage": "assets/profile/aswanth.webp",
       "userName": "aswanth123",
-      "fullName": "Aswanth Kumar",
+      "userFullName": "Aswanth Kumar",
       "userBio":
           "Lover of nature and travel. Always exploring new places and capturing memories. I believe in living life to the fullest. Come join my journey!",
       "userGender": "Male",
       "userDOB": "January 1, 1995",
       "userPosts": [
         {
-          "location": "New York",
-          "description": "The city that never sleeps. Amazing places to visit!",
-          "images": [
+          "tripLocation": "New York",
+          "Tripdescription":
+              "The city that never sleeps. Amazing places to visit!",
+          "locationImages": [
             "assets/bg2.jpg",
             "assets/b4.jpg",
             "assets/bg4.jpg",
-            "assets/b4.jpg",
-            "assets/bg4.jpg"
           ],
-          "currentIndex": 0,
-          "completed": true,
-          "rating": 4.5,
-          "friends": ["friend1", "friend2"],
-          "postId": "post12345"
+          "tripCompleted": true,
+          "tripDuration": 5,
+          "tripRating": 4.5,
+          "tripFeedback": "nice",
+          "postId": "post1"
         },
         {
-          "location": "Paris",
-          "description":
-              "Romantic city with iconic landmarks like the Eiffel Tower.",
-          "images": ["assets/bg3.jpg", "assets/b2.jpg", "assets/bg4.jpg"],
-          "currentIndex": 0,
-          "completed": false,
-          "rating": 0,
-          "friends": [],
-          "postId": "post12346"
+          "tripLocation": "New York",
+          "Tripdescription":
+              "The city that never sleeps. Amazing places to visit!",
+          "tripDuration": 5,
+          "locationImages": [
+            "assets/bg2.jpg",
+            "assets/b4.jpg",
+            "assets/bg4.jpg",
+          ],
+          "tripCompleted": false,
+          "tripRating": null,
+          "tripFeedback": null,
+          "postId": "post1"
         }
       ],
-      "tripPhotos": ["assets/trip/bg1.jpg", "assets/trip/bg2.jpg"],
-      "socialLinks": {
+      "tripPhotos": [
+        'assets/profile/aswanth.webp',
+        "assets/bg2.jpg",
+        "assets/bg4.jpg",
+        "assets/bg4.jpg",
+      ],
+      "userSocialLinks": {
         "instagram": "https://www.instagram.com/aswanth123",
         "facebook": "https://www.facebook.com/aswanth.kumar",
-        "gmail": "aswanth.kumar@gmail.com"
+        "gmail": "aswanth.kumar@gmail.com",
+        "twitter": "https://x.com/__x"
       },
     },
     {
       "userImage": "assets/profile/sagar.jpg",
-      "userName": "Sagar",
-      "fullName": "Sagar",
-      "userBio": '',
-      "userGender": 'Male',
-      "userDOB": "users",
+      "userName": "sagar123",
+      "userFullName": "Sagar Sree",
+      "userBio":
+          "Lover of nature and travel. Always exploring new places and capturing memories. I believe in living life to the fullest. Come join my journey!",
+      "userGender": "Male",
+      "userDOB": "January 1, 1995",
       "userPosts": [
         {
-          "location": "Kyoto, Japan",
-          "description": "A city of temples and traditions.",
-          "images": ["assets/bg4.jpg", "assets/bg5.jpg"],
-          "currentIndex": 0,
-          "completed": false,
-          "rating": 0,
-          "friends": [],
-          "postId": "67890"
+          "tripLocation": "New York",
+          "Tripdescription":
+              "The city that never sleeps. Amazing places to visit!",
+          "locationImages": [
+            "assets/bg2.jpg",
+            "assets/b4.jpg",
+            "assets/bg4.jpg",
+          ],
+          "tripCompleted": true,
+          "tripDuration": 5,
+          "tripRating": 4.5,
+          "tripFeedback": "nice",
+          "postId": "post1"
+        },
+        {
+          "tripLocation": "New York",
+          "Tripdescription":
+              "The city that never sleeps. Amazing places to visit!",
+          "tripDuration": 5,
+          "locationImages": [
+            "assets/bg2.jpg",
+            "assets/b4.jpg",
+            "assets/bg4.jpg",
+          ],
+          "tripCompleted": false,
+          "tripRating": null,
+          "tripFeedback": null,
+          "postId": "post1"
         }
       ],
-      "tripPhotos": [],
-      "socialLinks": {
+      "tripPhotos": [
+        'assets/profile/sagar.jpg',
+        "assets/bg2.jpg",
+        "assets/bg4.jpg",
+        "assets/bg4.jpg",
+      ],
+      "userSocialLinks": {
         "instagram": "https://www.instagram.com/aswanth123",
         "facebook": "https://www.facebook.com/aswanth.kumar",
-        "gmail": "aswanth.kumar@gmail.com"
+        "gmail": "aswanth.kumar@gmail.com",
+        "twitter": "https://x.com/__x"
       },
     },
-    {
-      "userImage": "assets/profile/ajmal.webp",
-      "userName": "Ajmal",
-      "fullName": "Ajmal U K",
-      "userBio": '',
-      "userGender": 'male',
-      "userDOB": 'doc',
-      "userPosts": [
-        {
-          "location": "New York, USA",
-          "description": "The city that never sleeps.",
-          "images": ["assets/logo.jpg", "assets/bg6.jpg", "assets/bg7.jpg"],
-          "currentIndex": 0,
-          "completed": true,
-          "rating": 5,
-          "friends": ['Ajmal', 'Achu'],
-          "postId": "11223"
-        }
-      ],
-      "tripPhotos": [],
-      "socialLinks": {
-        "instagram": "https://www.instagram.com/aswanth123",
-        "facebook": "https://www.facebook.com/aswanth.kumar",
-        "gmail": "aswanth.kumar@gmail.com"
-      },
-    }
-    // Add more users if necessary
+
+    // Add more user data as necessary
   ];
-  late Map<String, dynamic> userData;
 
-  @override
-  void initState() {
-    super.initState();
-    // Find the user by username
-    userData = users.firstWhere((user) => user['userName'] == widget.username);
+  /// Fetches user data based on the username
+  Map<String, dynamic>? getUserData() {
+    try {
+      return users.firstWhere((user) => user['userName'] == widget.username);
+    } catch (e) {
+      return null; // Handle the case where no user is found
+    }
   }
-
-  bool isPostsSelected = true;
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+    final userData = getUserData();
+
+    if (userData == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('User Profile')),
+        body: const Center(
+          child: Text('User not found!'),
+        ),
+        backgroundColor: Color.fromRGBO(255, 175, 175, 1),
+      );
+    }
+
+    final List<dynamic> userPosts = userData['userPosts'] ?? [];
+    final List<dynamic> tripPhotos = userData['tripPhotos'] ?? [];
+
+    // Count completed and total posts
+    int totalPosts = userPosts.length;
+    int completedPosts =
+        userPosts.where((post) => post['tripCompleted']).length;
 
     return Scaffold(
+      backgroundColor: userData['userGender']?.toLowerCase() == 'female'
+          ? Color.fromRGBO(254, 244, 255, 1) // Pinkish color for female
+          : const Color.fromARGB(255, 242, 255, 255),
       appBar: AppBar(
-        title: Text(userData['userName']), // Display the username in the AppBar
+        title: Text(userData['userName']),
       ),
-      body: Column(
-        children: [
-          // User Profile Section
-          Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: screenWidth * 0.05, vertical: screenHeight * 0.02),
-            child: Column(
-              children: [
-                CircleAvatar(
-                  radius: screenWidth * 0.15,
-                  backgroundImage: AssetImage(userData['userImage']),
-                ),
-                SizedBox(height: screenHeight * 0.02),
-                // Display the full name here
-                Text(
-                  userData['fullName'],
-                  style: TextStyle(
-                    fontSize: screenWidth * 0.06,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: screenHeight * 0.01),
-                // Display Bio with possible multiple lines
-                _buildBioSection(),
-                SizedBox(height: screenHeight * 0.02),
-                // Chat Button
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            ChatPage(username: userData['userName']),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Colors.green, // Set the background color to green
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12), // Adjust padding to reduce width
-                    minimumSize: const Size(
-                        150, 50), // Set a minimum size (width, height)
-                  ),
-                  child: Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment.center, // Center the content
-                    children: [
-                      Icon(
-                        Icons.chat, // Add the chat icon
-                        color: Colors.white, // Set icon color to white
-                        size: screenWidth *
-                            0.05, // Adjust size based on screen width
-                      ),
-                      SizedBox(width: 8), // Space between the icon and text
-                      Text(
-                        'Chat',
-                        style: TextStyle(
-                            fontSize: screenWidth * 0.045, color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Toggle Buttons for Posts and Trip Photos
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildToggleButton(
-                  label: 'Posts',
-                  isSelected: isPostsSelected,
-                  onPressed: () {
-                    setState(() {
-                      isPostsSelected = true;
-                    });
-                  },
-                ),
-                _buildToggleButton(
-                  label: 'Trip Photos',
-                  isSelected: !isPostsSelected,
-                  onPressed: () {
-                    setState(() {
-                      isPostsSelected = false;
-                    });
-                  },
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-              height:
-                  screenHeight * 0.02), // Gap between buttons and grid content
-          // Content Section (Posts or Trip Photos)
-          Expanded(
-            child: isPostsSelected
-                ? _buildPostsGrid(screenWidth)
-                : _buildTripPhotosGrid(screenWidth),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Custom Toggle Button Styling
-  Widget _buildToggleButton({
-    required String label,
-    required bool isSelected,
-    required VoidCallback onPressed,
-  }) {
-    return Expanded(
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: isSelected ? Colors.blueAccent : Colors.grey[300],
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          padding: EdgeInsets.symmetric(vertical: 12),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: isSelected ? Colors.white : Colors.black54,
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Bio Section - Conditionally expandable with links
-  Widget _buildBioSection() {
-    return Column(
-      children: [
-        // Show truncated bio by default
-        Text(
-          isBioExpanded
-              ? userData['userBio']
-              : _truncateBio(userData['userBio']), // Truncate Bio by default
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 16),
-        ),
-        if (isBioExpanded) ...[
-          SizedBox(height: 10),
-          Text('Gender: ${userData['userGender']}'),
-          Text('DOB: ${userData['userDOB']}'),
-          SizedBox(height: 10),
-          // Show social links when expanded
-          _buildSocialLinks(),
-        ],
-        InkWell(
-          onTap: _toggleBioExpansion,
-          child: Text(
-            isBioExpanded ? 'less...' : 'more...',
-            style: TextStyle(
-              color: Colors.blue,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  // Truncate Bio text to the first line that fits screen width
-  String _truncateBio(String bio) {
-    int maxLength = 80; // Max characters visible before truncating
-    return bio.length > maxLength ? bio.substring(0, maxLength) + '...' : bio;
-  }
-
-  // Toggle Bio and links expansion
-  void _toggleBioExpansion() {
-    setState(() {
-      isBioExpanded = !isBioExpanded;
-    });
-  }
-
-  // Build the social media links (displayed only when bio is expanded)
-  // Build the social media links (displayed only when bio is expanded)
-  Widget _buildSocialLinks() {
-    List<Widget> links = [];
-    final socialLinks = userData['socialLinks'];
-
-    // Instagram
-    if (socialLinks['instagram']?.isNotEmpty ?? false) {
-      links.add(_buildLinkText(socialLinks['instagram']!));
-    }
-    // Facebook
-    if (socialLinks['facebook']?.isNotEmpty ?? false) {
-      links.add(_buildLinkText(socialLinks['facebook']!));
-    }
-    // X (Twitter) - Added null check for 'x'
-    if (socialLinks['x']?.isNotEmpty ?? false) {
-      links.add(_buildLinkText(socialLinks['x']!));
-    }
-    // Gmail
-    if (socialLinks['gmail']?.isNotEmpty ?? false) {
-      links.add(_buildLinkText('mailto:${socialLinks['gmail']}'));
-    }
-
-    // Return the links as a column
-    return Column(
-      children: links,
-    );
-  }
-
-  // Build clickable link text with truncation for long URLs
-  Widget _buildLinkText(String url) {
-    String truncatedUrl = url.length > 30
-        ? url.substring(0, 30) + '...'
-        : url; // Truncate link text
-    return GestureDetector(
-      onTap: () => _openLink(url),
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 8.0),
-        child: Text(
-          '🔗 $truncatedUrl',
-          style: TextStyle(
-            color: Colors.blue,
-            fontSize: 14,
-            decoration: TextDecoration.underline,
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Open the link in the browser
-  void _openLink(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
-
-  // Build the grid for user posts
-  Widget _buildPostsGrid(double screenWidth) {
-    return GridView.builder(
-      padding: const EdgeInsets.all(8.0),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: screenWidth < 600 ? 2 : 3,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
-        childAspectRatio: 0.8, // Adjust aspect ratio for taller grid items
-      ),
-      itemCount: userData['userPosts'].length,
-      itemBuilder: (context, index) {
-        final post = userData['userPosts'][index];
-        int currentIndex = post['currentIndex'];
-        bool isCompleted = post['completed'];
-
-        return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PostDetailScreen(
-                  postId: post['postId'], // Pass postId
-                  username: userData['userName'], // Pass username
-                ),
-              ),
-            );
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 6,
-                  offset: Offset(0, 3),
-                ),
-              ],
-              color: isCompleted ? Colors.green[100] : Colors.white,
-            ),
-            child: Column(
-              children: [
-                Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.asset(
-                        post['images'][currentIndex],
-                        fit: BoxFit.cover,
-                        height: screenWidth * 0.25,
-                        width: double.infinity, // Fill width
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Top Section: User Image and Post Counts
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Container(
+                    width: 60, // Set the width to match the CircleAvatar's size
+                    height:
+                        60, // Set the height to match the CircleAvatar's size
+                    decoration: BoxDecoration(
+                      shape:
+                          BoxShape.circle, // Ensures the container is circular
+                      border: Border.all(
+                        color:
+                            Colors.black, // Border color (black in this case)
+                        width: 3, // Border width
                       ),
                     ),
-                    if (currentIndex > 0)
-                      Positioned(
-                        top: 10,
-                        left: 5,
-                        child: IconButton(
-                          icon: Icon(Icons.arrow_back_ios, size: 20),
-                          onPressed: () {
-                            setState(() {
-                              if (currentIndex > 0) {
-                                post['currentIndex'] = currentIndex - 1;
-                              } else {
-                                post['currentIndex'] =
-                                    post['images'].length - 1;
-                              }
-                            });
-                          },
-                        ),
-                      ),
-                    if (currentIndex < post['images'].length - 1)
-                      Positioned(
-                        top: 10,
-                        right: 5,
-                        child: IconButton(
-                          icon: Icon(Icons.arrow_forward_ios, size: 20),
-                          onPressed: () {
-                            setState(() {
-                              if (currentIndex < post['images'].length - 1) {
-                                post['currentIndex'] = currentIndex + 1;
-                              } else {
-                                post['currentIndex'] = 0;
-                              }
-                            });
-                          },
-                        ),
-                      ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        post['location'],
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      SizedBox(height: 5),
-                      if (isCompleted) ...[
-                        SizedBox(height: 10),
-                        Text(
-                          'Rating: ${post['rating']}',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.green[800],
-                          ),
-                        ),
+                    child: CircleAvatar(
+                      radius:
+                          30, // Half of the width and height of the container
+                      backgroundImage: AssetImage(userData['userImage']),
+                      backgroundColor: Colors.black, // Avatar background color
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment
+                              .center, // Center the row content
+                          children: [
+                            // Column for "Posts"
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment
+                                  .center, // Center the content vertically in the column
+                              crossAxisAlignment: CrossAxisAlignment
+                                  .center, // Align content to the center horizontally
+                              children: [
+                                Text(
+                                  '$totalPosts', // The count (number) at the top
+                                  style: const TextStyle(
+                                    fontSize:
+                                        24, // Larger font size for the count
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  'Posts', // Label below the count
+                                  style: const TextStyle(
+                                    fontSize:
+                                        12, // Smaller font size for the label
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            const SizedBox(
+                                width:
+                                    60), // Reduced space between "Posts" and "Completed"
+
+                            // Column for "Completed"
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment
+                                  .center, // Center the content vertically in the column
+                              crossAxisAlignment: CrossAxisAlignment
+                                  .center, // Align content to the center horizontally
+                              children: [
+                                Text(
+                                  '$completedPosts', // The count (number) at the top
+                                  style: const TextStyle(
+                                    fontSize:
+                                        24, // Larger font size for the count
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  'Completed', // Label below the count
+                                  style: const TextStyle(
+                                    fontSize:
+                                        12, // Smaller font size for the label
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        )
                       ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Below Section: Full Name, DOB, Gender, Bio, Chat Button
+            // Below Section: Full Name, DOB, Gender, Bio, Chat Button, Social Links
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${userData['userFullName']}',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'DOB: ${userData['userDOB']}',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    'Gender: ${userData['userGender']}',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '${userData['userBio'] ?? ''}',
+                    overflow: TextOverflow.ellipsis,
+                    maxLines:
+                        3, // Allow bio to break onto the next line if too long
+                    style: TextStyle(fontSize: 12),
+                  ),
+                  const SizedBox(height: 4),
+
+                  // Social Links Row
+                  // Social Links Row
+                  Row(
+                    mainAxisAlignment:
+                        MainAxisAlignment.center, // Center align the row
+                    children: [
+                      // Instagram Icon
+                      if (userData['userSocialLinks']['instagram']
+                              ?.isNotEmpty ??
+                          false)
+                        IconButton(
+                          onPressed: () {
+                            final instagramLink =
+                                userData['userSocialLinks']['instagram'];
+                            launchUrl(Uri.parse(instagramLink));
+                          },
+                          icon: FaIcon(
+                            FontAwesomeIcons.instagram,
+                            color: Colors.purple,
+                            size: 15, // Adjust size as needed
+                          ),
+                          tooltip: 'Instagram',
+                        ),
+                      if (userData['userSocialLinks']['instagram']
+                              ?.isNotEmpty ??
+                          false)
+                        const SizedBox(width: 6),
+
+                      // Twitter (X) Icon
+                      if (userData['userSocialLinks']['twitter']?.isNotEmpty ??
+                          false)
+                        IconButton(
+                          onPressed: () {
+                            final twitterLink =
+                                userData['userSocialLinks']['twitter'];
+                            launchUrl(Uri.parse(twitterLink));
+                          },
+                          icon: FaIcon(
+                            FontAwesomeIcons.x, // Icon for Twitter (X)
+                            color: const Color.fromARGB(255, 0, 0, 0),
+                            size: 15, // Adjust size as needed
+                          ),
+                          tooltip: 'Twitter',
+                        ),
+                      if (userData['userSocialLinks']['twitter']?.isNotEmpty ??
+                          false)
+                        const SizedBox(width: 6),
+
+                      // Gmail Icon
+                      if (userData['userSocialLinks']['gmail']?.isNotEmpty ??
+                          false)
+                        IconButton(
+                          onPressed: () {
+                            final gmailLink =
+                                userData['userSocialLinks']['gmail'];
+                            launchUrl(Uri(
+                              scheme: 'mailto',
+                              path: gmailLink,
+                            ));
+                          },
+                          icon: FaIcon(
+                            FontAwesomeIcons.envelope,
+                            color: Colors.red,
+                            size: 15, // Adjust size as needed
+                          ),
+                          tooltip: 'Gmail',
+                        ),
+                      if (userData['userSocialLinks']['gmail']?.isNotEmpty ??
+                          false)
+                        const SizedBox(width: 6),
+
+                      // Facebook Icon
+                      if (userData['userSocialLinks']['facebook']?.isNotEmpty ??
+                          false)
+                        IconButton(
+                          onPressed: () {
+                            final facebookLink =
+                                userData['userSocialLinks']['facebook'];
+                            launchUrl(Uri.parse(facebookLink));
+                          },
+                          icon: FaIcon(
+                            FontAwesomeIcons.facebook,
+                            color: Colors.blue,
+                            size: 15, // Adjust size as needed
+                          ),
+                          tooltip: 'Facebook',
+                        ),
                     ],
                   ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
 
-  // Build the grid for trip photos
-  Widget _buildTripPhotosGrid(double screenWidth) {
-    return GridView.builder(
-      padding: const EdgeInsets.all(8.0),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: screenWidth < 600 ? 2 : 3,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
-      ),
-      itemCount: userData['tripPhotos'].length,
-      itemBuilder: (context, index) {
-        return Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 6,
-                offset: Offset(0, 3),
+                  const SizedBox(height: 4),
+
+                  // Chat Button
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize:
+                          Size(double.infinity, 50), // Increase button width
+                      side: BorderSide(
+                          color: Colors.black, width: 1), // Black border
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ChatPage(username: userData['userName']),
+                        ),
+                      );
+                    },
+                    child: const Text('Chat'),
+                  ),
+                ],
               ),
-            ],
-            color: Colors.white,
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.asset(
-              userData['tripPhotos'][index],
-              fit: BoxFit.cover,
-              height: screenWidth * 0.3, // Reduced height
             ),
-          ),
-        );
-      },
+
+            // Posts and Trip Image Toggle
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Post button with underline effect
+                  Column(
+                    children: [
+                      TextButton.icon(
+                        onPressed: () {
+                          setState(() {
+                            showPosts = true;
+                          });
+                        },
+                        icon: const Icon(Icons.grid_on),
+                        label: const Text('Posts'),
+                      ),
+                      // Underline when Posts is selected
+                      if (showPosts)
+                        Container(
+                          height: 2,
+                          width: 50,
+                          color: Colors.blue,
+                        ),
+                    ],
+                  ),
+                  const SizedBox(width: 16),
+                  // Trip button with underline effect
+                  Column(
+                    children: [
+                      TextButton.icon(
+                        onPressed: () {
+                          setState(() {
+                            showPosts = false;
+                          });
+                        },
+                        icon: const Icon(Icons.photo_album),
+                        label: const Text('Trip Images'),
+                      ),
+                      // Underline when Trip Images is selected
+                      if (!showPosts)
+                        Container(
+                          height: 2,
+                          width: 50,
+                          color: Colors.blue,
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            // Display Posts or Trip Images
+            if (showPosts)
+              Column(
+                children: [
+                  // Show Posts Section
+                  if (userPosts.isEmpty)
+                    const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          // Larger emoji 🚫
+                          Text(
+                            '🚫',
+                            style: TextStyle(
+                              fontSize: 50, // Increase the size of the emoji
+                            ),
+                          ),
+                          // Text below the emoji
+                          Text(
+                            'No posts available',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  else
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3, // Number of items per row
+                        crossAxisSpacing: 8, // Horizontal space between items
+                        mainAxisSpacing: 8, // Vertical space between items
+                        childAspectRatio:
+                            0.65, // Increase this value to make the grid items taller
+                      ),
+                      itemCount: userPosts.length,
+                      itemBuilder: (context, index) {
+                        final post = userPosts[index];
+
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PostDetailScreen(
+                                  postId: post['postId'],
+                                  username: userData['userName'],
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: (post['tripCompleted'] ?? false)
+                                  ? Colors.green[100]
+                                  : Colors.white,
+                              border: Border.all(
+                                color: Colors.grey, // Border color
+                                width: 1, // Border width
+                              ),
+                              borderRadius: BorderRadius.circular(
+                                  12), // Match the image's corner radius
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color.fromARGB(
+                                          255, 138, 222, 255)
+                                      .withOpacity(
+                                          0.5), // Shadow color with transparency
+                                  spreadRadius: 2, // Spread radius
+                                  blurRadius: 5, // Blur radius
+                                  offset:
+                                      Offset(0, 3), // Shadow position (x, y)
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Image at the top
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(
+                                      12), // Match the container's radius
+                                  child: Image.asset(
+                                    post['locationImages'][0],
+                                    fit: BoxFit.cover,
+                                    height:
+                                        100, // Set a fixed height for the image
+                                    width: double.infinity,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      // Location text
+                                      Text(
+                                        post['tripLocation'],
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      // "Completed" status text
+                                      Text(
+                                        'Completed: ${(post['tripCompleted'] ?? false) ? '✔️' : '❌'}',
+                                        style: TextStyle(
+                                          fontSize:
+                                              12, // Font size for "Completed"
+                                        ),
+                                      ),
+                                      if (post['tripCompleted'] ?? false)
+                                        // Rating bar (only visible if completed)
+                                        RatingBar.builder(
+                                          initialRating:
+                                              post['tripRating'] ?? 0,
+                                          minRating: 0,
+                                          itemSize: 20,
+                                          direction: Axis.horizontal,
+                                          allowHalfRating: true,
+                                          itemCount: 5,
+                                          itemBuilder: (context, _) =>
+                                              const Icon(
+                                            Icons.star,
+                                            color: Colors.yellow,
+                                          ),
+                                          onRatingUpdate: (rating) {
+                                            print(rating);
+                                          },
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    )
+                ],
+              )
+            else
+              // Show Trip Images Section
+              Column(
+                children: [
+                  if (tripPhotos.isEmpty)
+                    const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            '🚫',
+                            style: TextStyle(
+                              fontSize: 50, // Increase the size of the emoji
+                            ),
+                          ),
+                          Text(
+                            'No trip images available',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  else
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
+                      ),
+                      itemCount: tripPhotos.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            // Show the overlay with the clicked image
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return Dialog(
+                                  backgroundColor: Colors.transparent,
+                                  child: Stack(
+                                    children: [
+                                      Center(
+                                        child: Image.asset(
+                                          tripPhotos[index],
+                                          fit: BoxFit
+                                              .contain, // Ensure the image maintains its aspect ratio
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          height: MediaQuery.of(context)
+                                              .size
+                                              .height,
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top:
+                                            20, // Position the X a bit above the image
+                                        right: 20, // Right side position
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            Navigator.of(context)
+                                                .pop(); // Close the dialog
+                                          },
+                                          child: Icon(
+                                            Icons.close,
+                                            color: Colors.white,
+                                            size:
+                                                40, // Increase size for better visibility
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          child: Image.asset(
+                            tripPhotos[index],
+                            fit: BoxFit.cover,
+                          ),
+                        );
+                      },
+                    ),
+                ],
+              ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -551,13 +737,8 @@ class ChatPage extends StatelessWidget {
         title: Text('Chat with $username'),
       ),
       body: Center(
-        child: Text('Chat interface with $username'),
+        child: Text('Chat Page for $username'),
       ),
     );
   }
 }
-
-void main() => runApp(MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: UsersProfilePage(username: 'aswanth123'), // Pass the username here
-    ));

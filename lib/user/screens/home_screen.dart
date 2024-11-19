@@ -8,44 +8,158 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<Map<String, dynamic>> posts = [
+  final List<Map<String, dynamic>> users = [
     {
-      'postId': 'post12345', // Added postId
-      'images': ['assets/bg2.jpg', 'assets/bg3.jpg', 'assets/bg2.jpg'],
-      'location': 'Paris, France',
-      'locationDescription': 'The city of lights and love.',
-      'tripDuration': '5 Days',
-      'userImage': 'assets/profile/aswanth.webp',
-      'userName': 'aswanth123',
+      "userImage": "assets/profile/aswanth.webp",
+      "userName": "aswanth123",
+      "userFullName": "Aswanth Kumar",
+      "userBio":
+          "Lover of nature and travel. Always exploring new places and capturing memories. I believe in living life to the fullest. Come join my journey!",
+      "userGender": "Male",
+      "userDOB": "January 1, 1995",
+      "userPosts": [
+        {
+          "tripLocation": "New York",
+          "tripLocationdescription":
+              "The city that never sleeps. Amazing places to visit!",
+          "locationImages": [
+            "assets/bg2.jpg",
+            "assets/bg4.jpg",
+            "assets/bg4.jpg",
+          ],
+          "tripCompleted": true,
+          "tripDuration": 5,
+          "tripRating": 4.5,
+          "tripFeedback": "nice",
+          "postId": "post1"
+        },
+        {
+          "tripLocation": "New York",
+          "tripLocationdescription":
+              "The city that never sleeps. Amazing places to visit!",
+          "tripDuration": 5,
+          "locationImages": [
+            "assets/bg2.jpg",
+            "assets/b4.jpg",
+            "assets/bg4.jpg",
+          ],
+          "tripCompleted": false,
+          "tripRating": null,
+          "tripFeedback": null,
+          "postId": "post1"
+        }
+      ],
+      "tripPhotos": [
+        'assets/profile/aswanth.webp',
+        "assets/bg2.jpg",
+        "assets/bg4.jpg",
+        "assets/bg4.jpg",
+      ],
+      "userSocialLinks": {
+        "instagram": "https://www.instagram.com/aswanth123",
+        "facebook": "https://www.facebook.com/aswanth.kumar",
+        "gmail": "aswanth.kumar@gmail.com",
+        "twitter": "https://x.com/__x"
+      },
     },
     {
-      'postId': '67890', // Added postId
-      'images': ['assets/bg4.jpg', 'assets/bg5.jpg'],
-      'location': 'Kyoto, Japan',
-      'locationDescription': 'A city of temples and traditions.',
-      'tripDuration': '7 Days',
-      'userImage': 'assets/profile/sagar.jpg',
-      'userName': 'Sagar',
-    },
-    {
-      'postId': '11223', // Added postId
-      'images': ['assets/logo.jpg', 'assets/bg6.jpg', 'assets/bg7.jpg'],
-      'location': 'New York, USA',
-      'locationDescription': 'The city that never sleeps.',
-      'tripDuration': '3 Days',
-      'userImage': 'assets/profile/ajmal.webp',
-      'userName': 'Ajmal',
-    },
-    {
-      'postId': '44556', // Added postId
-      'images': ['assets/logo.jpg', 'assets/bg6.jpg', 'assets/bg7.jpg'],
-      'location': 'New York, USA',
-      'locationDescription': 'The city that never sleeps.',
-      'tripDuration': '3 Days',
-      'userImage': 'assets/profile/ajmal.webp',
-      'userName': 'Ajmal',
+      "userImage": "assets/profile/sagar.jpg",
+      "userName": "sagar123",
+      "userFullName": "Sagar Sree",
+      "userBio":
+          "Lover of nature and travel. Always exploring new places and capturing memories. I believe in living life to the fullest. Come join my journey!",
+      "userGender": "Male",
+      "userDOB": "January 1, 1995",
+      "userPosts": [
+        {
+          "tripLocation": "New York",
+          "tripLocationdescription":
+              "The city that never sleeps. Amazing places to visit!",
+          "locationImages": [
+            "assets/bg2.jpg",
+            "assets/b4.jpg",
+            "assets/bg4.jpg",
+          ],
+          "tripCompleted": true,
+          "tripDuration": 5,
+          "tripRating": 4.5,
+          "tripFeedback": "nice",
+          "postId": "post1"
+        },
+        {
+          "tripLocation": "New York",
+          "tripLocationdescription":
+              "The city that never sleeps. Amazing places to visit!",
+          "tripDuration": 5,
+          "locationImages": [
+            "assets/bg2.jpg",
+            "assets/b4.jpg",
+            "assets/bg4.jpg",
+          ],
+          "tripCompleted": false,
+          "tripRating": null,
+          "tripFeedback": null,
+          "postId": "post1"
+        }
+      ],
+      "tripPhotos": [
+        'assets/profile/sagar.jpg',
+        "assets/bg2.jpg",
+        "assets/bg4.jpg",
+        "assets/bg4.jpg",
+      ],
+      "userSocialLinks": {
+        "instagram": "https://www.instagram.com/aswanth123",
+        "facebook": "https://www.facebook.com/aswanth.kumar",
+        "gmail": "aswanth.kumar@gmail.com",
+        "twitter": "https://x.com/__x"
+      },
     },
   ];
+  late List<Map<String, dynamic>> posts;
+
+  List<Map<String, dynamic>> _generatePostFeed(
+      List<Map<String, dynamic>> users) {
+    List<Map<String, dynamic>> allPosts = [];
+    for (var user in users) {
+      for (var post in user["userPosts"]) {
+        allPosts.add({
+          "postId": post["postId"],
+          "images": post["locationImages"],
+          "location": post["tripLocation"],
+          "locationDescription": post["tripLocationdescription"],
+          "tripDuration": post["tripDuration"],
+          "userImage": user["userImage"],
+          "userName": user["userName"],
+        });
+      }
+    }
+
+    // Shuffle posts to ensure posts from the same user are not consecutive
+    allPosts.shuffle();
+    return _interleavePostsByUser(allPosts);
+  }
+
+  List<Map<String, dynamic>> _interleavePostsByUser(
+      List<Map<String, dynamic>> posts) {
+    Map<String, List<Map<String, dynamic>>> userPosts = {};
+    for (var post in posts) {
+      userPosts.putIfAbsent(post['userName'], () => []).add(post);
+    }
+
+    List<Map<String, dynamic>> result = [];
+    while (userPosts.isNotEmpty) {
+      for (var user in userPosts.keys.toList()) {
+        if (userPosts[user]!.isNotEmpty) {
+          result.add(userPosts[user]!.removeAt(0));
+        }
+        if (userPosts[user]!.isEmpty) {
+          userPosts.remove(user);
+        }
+      }
+    }
+    return result;
+  }
 
   String filterLocation = '';
   String filterDuration = '';
@@ -58,6 +172,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    posts = _generatePostFeed(users);
     filteredPosts = posts;
   }
 
@@ -120,6 +235,8 @@ class _HomePageState extends State<HomePage> {
                 decoration: InputDecoration(
                   hintText: 'Search by location',
                   border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.symmetric(
+                      vertical: 6.0, horizontal: 10.0), // Adjust the padding
                   suffixIcon: IconButton(
                     icon: Icon(Icons.clear),
                     onPressed: () {
@@ -219,7 +336,7 @@ class _HomePageState extends State<HomePage> {
                   images: post['images'],
                   location: post['location'],
                   locationDescription: post['locationDescription'],
-                  tripDuration: post['tripDuration'],
+                  tripDuration: post['tripDuration'].toString(),
                   userImage: post['userImage'],
                   userName: post['userName'],
                 );
@@ -414,7 +531,7 @@ class _UserPostState extends State<UserPost> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
                 child: Text(
-                  widget.tripDuration,
+                  'Duration Plan : ${widget.tripDuration}',
                   style: TextStyle(color: Colors.grey),
                 ),
               ),

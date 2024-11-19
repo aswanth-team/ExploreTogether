@@ -1,0 +1,280 @@
+class UsersProfilePage extends StatefulWidget {
+  final String username;
+
+  UsersProfilePage({required this.username});
+
+  @override
+  _UsersProfilePageState createState() => _UsersProfilePageState();
+}
+
+class _UsersProfilePageState extends State<UsersProfilePage> {
+  bool showPosts = true; // Initially, show posts
+  bool isLoading = false; // Track loading state
+
+  // Simulate a dynamic list of users that acts like a "database"
+  List<Map<String, dynamic>> users = [
+    {
+      "userImage": "assets/profile/aswanth.webp",
+      "userName": "aswanth123",
+      "userFullName": "Aswanth Kumar",
+      "userBio": "Lover of nature and travel",
+      "userGender": "Male",
+      "userDOB": "January 1, 1995",
+      "userPosts": [
+        {
+          "tripLocation": "New York",
+          "tripDescription":
+              "The city that never sleeps. Amazing places to visit!",
+          "locationImages": ["assets/bg2.jpg"],
+          "tripCompleted": false,
+          "tripRating": 4.5,
+          "postId": "post1"
+        },
+      ],
+      "tripPhotos": [],
+      "userSocialLinks": {
+        "instagram": "3",
+        "facebook": "r",
+        "gmail": "m",
+        "twitter": "x"
+      },
+    },
+  ];
+
+  // Fetch user data based on the username
+  Map<String, dynamic>? getUserData() {
+    try {
+      return users.firstWhere((user) => user['userName'] == widget.username);
+    } catch (e) {
+      return null; // Handle the case where no user is found
+    }
+  }
+
+  // Simulate fetching updated user data (like from a backend or database)
+  Future<void> _refreshUserData() async {
+    setState(() {
+      isLoading = true; // Show loading spinner
+    });
+
+    await Future.delayed(const Duration(seconds: 2)); // Simulate network/database delay
+
+    setState(() {
+      // Simulate an update in user posts after refreshing
+      final newPost = {
+        "tripLocation": "Paris",
+        "tripDescription": "A new adventure awaits in Paris!",
+        "locationImages": ["assets/new_image.jpg"],
+        "tripCompleted": false,
+        "tripRating": 0.0,
+        "postId": "post${users[0]['userPosts'].length + 1}",
+      };
+      // Adding the new post to the user’s data
+      users[0]['userPosts'].add(newPost);
+
+      isLoading = false; // Hide the loading spinner
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final userData = getUserData();
+
+    if (userData == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('User Profile')),
+        body: const Center(
+          child: Text('User not found!'),
+        ),
+        backgroundColor: Color.fromRGBO(255, 175, 175, 1),
+      );
+    }
+
+    final List<dynamic> userPosts = userData['userPosts'] ?? [];
+    final List<dynamic> tripPhotos = userData['tripPhotos'] ?? [];
+
+    // Count completed and total posts
+    int totalPosts = userPosts.length;
+    int completedPosts =
+        userPosts.where((post) => post['tripCompleted']).length;
+
+    return Scaffold(
+      backgroundColor: userData['userGender']?.toLowerCase() == 'female'
+          ? Color.fromRGBO(254, 244, 255, 1) // Pinkish color for female
+          : const Color.fromARGB(255, 242, 255, 255),
+      appBar: AppBar(
+        title: Text(userData['userName']),
+      ),
+      body: RefreshIndicator(
+        onRefresh: _refreshUserData, // Trigger data refresh
+        child: Stack(
+          children: [
+            // Main body content
+            SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Your top profile section code (image, username, etc.)
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 60,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.black,
+                              width: 3,
+                            ),
+                          ),
+                          child: CircleAvatar(
+                            radius: 30,
+                            backgroundImage: AssetImage(userData['userImage']),
+                            backgroundColor: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        '$totalPosts',
+                                        style: const TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const Text(
+                                        'Posts',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(width: 60),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        '$completedPosts',
+                                        style: const TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const Text(
+                                        'Completed',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Additional profile details here (full name, bio, etc.)
+                  // Show posts or trip images
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: Column(
+                      children: [
+                        // Posts section
+                        if (showPosts)
+                          userPosts.isEmpty
+                              ? const Center(
+                                  child: Text('No posts available'),
+                                )
+                              : GridView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 3,
+                                    crossAxisSpacing: 8,
+                                    mainAxisSpacing: 8,
+                                    childAspectRatio: 0.65,
+                                  ),
+                                  itemCount: userPosts.length,
+                                  itemBuilder: (context, index) {
+                                    final post = userPosts[index];
+                                    return GestureDetector(
+                                      onTap: () {
+                                        // Navigate to the post detail page
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: post['tripCompleted'] ?? false
+                                              ? Colors.green[100]
+                                              : Colors.white,
+                                          border: Border.all(
+                                            color: Colors.grey,
+                                            width: 1,
+                                          ),
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              child: Image.asset(
+                                                post['locationImages'][0],
+                                                fit: BoxFit.cover,
+                                                height: 100,
+                                                width: double.infinity,
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Column(
+                                                children: [
+                                                  Text(post['tripLocation']),
+                                                  Text('Completed: ${post['tripCompleted'] ? '✔️' : '❌'}'),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Loading spinner on top when isLoading is true
+            if (isLoading)
+              Positioned(
+                top: 16,
+                left: MediaQuery.of(context).size.width / 2 - 20,
+                child: const CircularProgressIndicator(),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
