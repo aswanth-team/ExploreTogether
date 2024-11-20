@@ -1,217 +1,521 @@
 import 'package:flutter/material.dart';
+import 'users.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'users_profile_screen.dart';
 
-class PostDetailScreen extends StatelessWidget {
+void main() => runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: PostDetailScreen(
+      username: 'aswanth123',
+      postId: '1',
+    ) // Pass the username here
+    ));
+
+class PostDetailScreen extends StatefulWidget {
   final String username; // Username passed as a parameter
   final String postId; // Post ID passed as a parameter
 
-  // Constructor accepts username and postId
   PostDetailScreen({
     required this.username,
     required this.postId,
   });
 
-  // Simulating post data with unique postId and username
-  final List<Map<String, dynamic>> userPosts = [
-    {
-      'postId': 'post12345', // Unique postId
-      'username': 'aswanth123', // Username for post
-      'userImage': 'assets/profile/aswanth.webp', // User image for post
-      'location': 'New York',
-      'description': 'The city that never sleeps. Amazing places to visit!',
-      'images': ['assets/bg2.jpg', 'assets/b3.jpg', 'assets/bg4.jpg'],
-      'currentIndex': 0,
-      'completed': true,
-      'rating': 4.5,
-      'friends': ['friend1', 'friend2', 'friend3'],
-      'tripDuration': '5 days',
-      'tripPlaces': ['Central Park', 'Statue of Liberty', 'Times Square'],
-      'tripFeedback': 'Amazing experience, would definitely visit again!',
-      'userGender': 'Male', // User gender
-      'userDOB': 'January 1, 1995', // User DOB
-    },
-    {
-      'postId': '67890', // Another unique postId
-      'username': 'john_doe', // Username for post
-      'userImage': 'assets/profile/john_doe.webp', // User image for post
-      'location': 'Paris',
-      'description':
-          'Romantic city with iconic landmarks like the Eiffel Tower.',
-      'images': [
-        'assets/posts/post4.jpg',
-        'assets/posts/post5.jpg',
-        'assets/posts/post6.jpg'
-      ],
-      'currentIndex': 0,
-      'completed': false,
-      'rating': null,
-      'friends': [],
-      'tripDuration': '3 days',
-      'tripPlaces': ['Eiffel Tower', 'Louvre Museum', 'Notre-Dame Cathedral'],
-      'tripFeedback': 'The trip was great but could have been longer.',
-      'userGender': 'Female', // User gender
-      'userDOB': 'March 5, 1992', // User DOB
-    },
-  ];
+  @override
+  _PostDetailScreenState createState() => _PostDetailScreenState();
+}
 
-  // Method to find the post by both username and postId
-  Map<String, dynamic> _getPostData() {
-    return userPosts.firstWhere(
-      (post) => post['postId'] == postId && post['username'] == username,
-      orElse: () => {}, // Returns an empty map if no post is found
-    );
+class _PostDetailScreenState extends State<PostDetailScreen> {
+  int currentIndex = 0;
+
+  // Method to fetch user data by username
+  Map<String, dynamic>? getUserData(String username) {
+    try {
+      return users.firstWhere(
+        (user) => user['userName'] == username,
+      );
+    } catch (e) {
+      return null; // If no user is found, return null
+    }
+  }
+
+  Map<String, dynamic>? getPostData(String username, String postId) {
+    final user = getUserData(username);
+    if (user != null) {
+      try {
+        return user['userPosts'].firstWhere(
+          (post) => post['postId'] == postId,
+        );
+      } catch (e) {
+        return null; // Return null if no match is found
+      }
+    }
+    return null;
   }
 
   @override
   Widget build(BuildContext context) {
-    final post = _getPostData();
+    // Fetch user and post data
+    final String username = widget.username;
+    final String postId = widget.postId;
 
-    // If post is not found, show a placeholder or error message
-    if (post.isEmpty) {
+    final user = getUserData(username);
+    final post = getPostData(username, postId);
+
+    // If user or post is not found, display an error
+    if (user == null || post == null) {
       return Scaffold(
         appBar: AppBar(
           title: Text('Post Detail'),
         ),
         body: Center(
-          child: Text('Post not found!'),
+          child: Text('User or Post not found!'),
         ),
       );
     }
 
-    final isCompleted = post['completed'];
-    final rating = post['rating'];
-    final friends = post['friends'];
+    // Extract dynamic properties
+    final isTripCompleted = post['tripCompleted'];
+    final tripRating = post['tripRating'];
+    final tripFeedback = post['tripFeedback'];
+    final tripBuddies = post['tripBuddies'] ?? [];
+    final locationImages = post['locationImages'] ?? [];
+    final visitedPalaces = post['visitedPlaces'] ?? [];
+    final planToVisitPlaces = post['planToVisitPlaces'];
+
+    print("Location Images: $locationImages");
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Post Detail #$postId'),
+        title: Text('Post Details #$postId'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // User info section at the top (User image, Username, Gender, DOB)
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 30.0,
-                  backgroundImage: AssetImage(post['userImage']),
-                ),
-                SizedBox(width: 10.0),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      post['username'], // Display the username
-                      style: TextStyle(
-                          fontSize: 18.0, fontWeight: FontWeight.bold),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // User info section
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      // Navigate to the UsersProfilePage when the image is tapped
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UsersProfilePage(
+                            username: user['userName'], // Passing username
+                          ),
+                        ),
+                      );
+                    },
+                    child: CircleAvatar(
+                      radius: 30.0,
+                      backgroundImage: AssetImage(user['userImage']),
                     ),
-                    Text(post['userGender']), // Display the gender
-                    Text(post['userDOB']), // Display the DOB
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(height: 16.0),
-
-            // Image Gallery with Swipeable < and > buttons
-            Column(
-              children: [
-                Container(
-                  height: 200.0,
-                  child: Stack(
+                  ),
+                  SizedBox(width: 10.0),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Image.asset(post['images'][post['currentIndex']],
-                          fit: BoxFit.cover, width: double.infinity),
-                      Positioned(
-                        left: 10.0,
-                        top: 90.0,
-                        child: IconButton(
-                          icon: Icon(Icons.arrow_left,
-                              color: Colors.white, size: 30),
-                          onPressed: () {
-                            // Update the current index
-                            if (post['currentIndex'] > 0) {
-                              post['currentIndex']--;
+                      Text(
+                        user['userFullName'], // Display full name
+                        style: TextStyle(
+                            fontSize: 18.0, fontWeight: FontWeight.bold),
+                      ),
+                      Text('Gender: ${user['userGender']}'), // Display gender
+                      // Optionally, you can add a display for the user's DOB here as well
+                    ],
+                  ),
+                ],
+              ),
+
+              SizedBox(height: 16.0),
+
+              Stack(
+                children: [
+                  // Display image based on the current index with rounded corners
+                  Container(
+                    height: 250.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(
+                          15.0), // Adjust the radius as needed
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(
+                          15.0), // Apply border radius to the image
+                      child: Image.asset(
+                        locationImages[
+                            currentIndex], // Use currentIndex to load the correct image
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                      ),
+                    ),
+                  ),
+
+                  // Left Arrow Button
+                  if (currentIndex >
+                      0) // Only show left arrow if not at the first image
+                    Positioned(
+                      left: 10.0,
+                      top: 90.0,
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (currentIndex > 0) {
+                              currentIndex--;
                             }
-                          },
+                            print(
+                                "Current index after left arrow: $currentIndex");
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(8.0),
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 0, 0, 0)
+                                .withOpacity(
+                                    0.3), // Transparent black background
+                            shape: BoxShape.circle, // Rounded shape
+                          ),
+                          child: Icon(Icons.arrow_left,
+                              color: Colors.white, size: 30),
                         ),
                       ),
-                      Positioned(
-                        right: 10.0,
-                        top: 90.0,
-                        child: IconButton(
-                          icon: Icon(Icons.arrow_right,
-                              color: Colors.white, size: 30),
-                          onPressed: () {
-                            // Update the current index
-                            if (post['currentIndex'] <
-                                post['images'].length - 1) {
-                              post['currentIndex']++;
+                    ),
+
+                  // Right Arrow Button
+                  if (currentIndex <
+                      locationImages.length -
+                          1) // Only show right arrow if not at the last image
+                    Positioned(
+                      right: 10.0,
+                      top: 90.0,
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (currentIndex < locationImages.length - 1) {
+                              currentIndex++;
                             }
-                          },
+                            print(
+                                "Current index after right arrow: $currentIndex");
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(8.0),
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 0, 0, 0)
+                                .withOpacity(
+                                    0.3), // Transparent black background
+                            shape: BoxShape.circle, // Rounded shape
+                          ),
+                          child: Icon(Icons.arrow_right,
+                              color: Colors.white, size: 30),
                         ),
                       ),
+                    ),
+                ],
+              ),
+
+              SizedBox(height: 16.0),
+
+              // Post details
+              Row(
+                mainAxisAlignment:
+                    MainAxisAlignment.center, // Centers content horizontally
+                crossAxisAlignment: CrossAxisAlignment
+                    .center, // Centers content vertically (if needed)
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment
+                        .center, // Centers content vertically in the column
+                    crossAxisAlignment: CrossAxisAlignment
+                        .center, // Centers content horizontally in the column
+                    children: [
+                      Text(
+                        'Trip to ${post['tripLocation']}',
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 8.0),
+                      // Container ensures wrapping and centers content
+                      Container(
+                        width: MediaQuery.of(context).size.width *
+                            0.8, // Limit width for wrapping
+                        child: Text(
+                          post['tripLocationDescription'],
+                          textAlign: TextAlign
+                              .center, // Ensures the text is centered horizontally
+                          softWrap:
+                              true, // Wrap the text to next line if it overflows
+                          overflow:
+                              TextOverflow.visible, // Prevent overflow clipping
+                        ),
+                      ),
+                      SizedBox(height: 10.0),
+                    ],
+                  ),
+                ],
+              ),
+              Divider(
+                color: Colors.black, // Color of the line
+                thickness: 2.0, // Thickness of the line
+                indent: 20.0, // Space before the line
+                endIndent: 20.0, // Space after the line
+              ),
+              SizedBox(height: 10.0),
+              if (!isTripCompleted) ...[
+                Center(
+                  child: Text(
+                    'Trip Duration Plan : ${post['tripDuration']} days',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                SizedBox(height: 8.0),
+                if (planToVisitPlaces.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment
+                              .center, // Centers the text in the middle
+                          children: [
+                            Text(
+                              'Plan To Visit Places:',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: const Color.fromARGB(255, 255, 0, 0),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8.0),
+                        GridView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 4, // Adjust number of columns
+                            crossAxisSpacing: 8.0,
+                            mainAxisSpacing: 8.0,
+                            childAspectRatio:
+                                2.5, // Smaller aspect ratio for shorter cells
+                          ),
+                          itemCount: visitedPalaces.length,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              padding: EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              child: Text(
+                                visitedPalaces[index],
+                                style: TextStyle(fontSize: 8),
+                                textAlign: TextAlign.center,
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                SizedBox(height: 8.0),
+              ],
+
+              // Trip completion details
+              if (isTripCompleted) ...[
+                Container(
+                  width:
+                      double.infinity, // Makes the container take up full width
+                  padding: EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    color: Colors.green[100],
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Colors.green,
+                      width: 2,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment
+                        .center, // Center align all children horizontally
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Trip Completed',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green),
+                      ),
+                      SizedBox(height: 8.0),
+                      if (tripBuddies.isNotEmpty)
+                        GridView.builder(
+                          shrinkWrap: true,
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3, // Two items in each row
+                            crossAxisSpacing: 10.0,
+                            mainAxisSpacing: 10.0,
+                          ),
+                          itemCount: tripBuddies.length,
+                          itemBuilder: (context, index) {
+                            final buddyUsername = tripBuddies[index];
+                            final buddy = getUserData(
+                                buddyUsername); // Get buddy user data
+
+                            if (buddy == null) {
+                              return Container(); // Handle missing user gracefully
+                            }
+
+                            // Convert gender to lowercase for consistent comparison
+                            String gender = buddy['userGender'].toLowerCase();
+
+                            // Determine grid background color based on gender
+                            Color gridColor;
+                            switch (gender) {
+                              case 'male':
+                                gridColor = const Color.fromARGB(
+                                    255, 186, 224, 255); // Blue for male
+                                break;
+                              case 'female':
+                                gridColor = const Color.fromARGB(255, 255, 224,
+                                    252); // Rose (pink) for female
+                                break;
+                              default:
+                                gridColor = const Color.fromARGB(255, 255, 253,
+                                    237); // Yellow for other or unknown genders
+                                break;
+                            }
+
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => UsersProfilePage(
+                                      username: buddy['userName'],
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Card(
+                                elevation: 5.0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                color:
+                                    gridColor, // Set grid background color based on gender
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                        height:
+                                            20.0), // Add top padding to create space between image and grid
+                                    CircleAvatar(
+                                      radius: 25.0,
+                                      backgroundImage:
+                                          AssetImage(buddy['userImage']),
+                                    ),
+                                    SizedBox(width: 10.0),
+                                    Expanded(
+                                      child: Text(
+                                        buddy['userName'],
+                                        style: TextStyle(fontSize: 10),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      SizedBox(height: 15.0),
+                      if (visitedPalaces.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .center, // Centers the text in the middle
+                                children: [
+                                  Text(
+                                    'Visited Places:',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          const Color.fromARGB(255, 255, 0, 0),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 8.0),
+                              GridView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 4, // Adjust number of columns
+                                  crossAxisSpacing: 8.0,
+                                  mainAxisSpacing: 8.0,
+                                  childAspectRatio:
+                                      2.5, // Smaller aspect ratio for shorter cells
+                                ),
+                                itemCount: visitedPalaces.length,
+                                itemBuilder: (context, index) {
+                                  return Container(
+                                    padding: EdgeInsets.all(8.0),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.grey),
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    child: Text(
+                                      visitedPalaces[index],
+                                      style: TextStyle(fontSize: 8),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      SizedBox(height: 8.0),
+                      if (tripRating != null)
+                        RatingBar.builder(
+                          initialRating: post['tripRating'] ?? 0,
+                          minRating: 0,
+                          itemSize: 20,
+                          direction: Axis.horizontal,
+                          allowHalfRating: true,
+                          itemCount: 5,
+                          itemBuilder: (context, _) => const Icon(
+                            Icons.star,
+                            color: Colors.yellow,
+                          ),
+                          onRatingUpdate: (rating) {
+                            print(rating);
+                          },
+                        ),
+                      SizedBox(height: 20.0),
+                      if (tripFeedback != null)
+                        Text(
+                          'Feedback : $tripFeedback',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      SizedBox(height: 8.0),
                     ],
                   ),
                 ),
               ],
-            ),
-            SizedBox(height: 16.0),
-
-            // Location and Description
-            Text(
-              'Location: ${post['location']}',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8.0),
-            Text(post['description']),
-            SizedBox(height: 8.0),
-
-            // Trip Duration and Plans
-            Text(
-              'Trip Duration: ${post['tripDuration']}',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8.0),
-            Text('Places to visit: ${post['tripPlaces'].join(', ')}'),
-
-            // If completed, show additional details
-            if (isCompleted) ...[
-              SizedBox(height: 16.0),
-              Container(
-                padding: EdgeInsets.all(8.0),
-                color: Colors.green[100],
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Trip Completed',
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green),
-                    ),
-                    SizedBox(height: 8.0),
-                    Row(
-                      children: [
-                        Icon(Icons.check_circle, color: Colors.green),
-                        SizedBox(width: 8.0),
-                        Text('Trip Completed', style: TextStyle(fontSize: 16)),
-                      ],
-                    ),
-                    SizedBox(height: 8.0),
-                    if (rating != null)
-                      Text('Rating: $rating', style: TextStyle(fontSize: 16)),
-                    SizedBox(height: 8.0),
-                    Text('Friends: ${friends.join(', ')}'),
-                    SizedBox(height: 8.0),
-                    Text('Feedback: ${post['tripFeedback']}'),
-                  ],
-                ),
-              ),
-            ]
-          ],
+            ],
+          ),
         ),
       ),
     );

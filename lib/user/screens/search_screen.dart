@@ -10,9 +10,9 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   String query = "";
   Color getBorderColor(String gender) {
-    if (gender == "Male") {
+    if (gender.toLowerCase() == "male") {
       return Colors.lightBlue;
-    } else if (gender == "Female") {
+    } else if (gender.toLowerCase() == "female") {
       return Colors.pinkAccent.shade100;
     } else {
       return Colors.yellow.shade600;
@@ -20,9 +20,9 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Color getShadowColor(String gender) {
-    if (gender == "Male") {
+    if (gender.toLowerCase() == "fale") {
       return Colors.lightBlue.withOpacity(0.1); // Light Blue with low opacity
-    } else if (gender == "Female") {
+    } else if (gender.toLowerCase() == "female") {
       return Colors.pinkAccent.shade100
           .withOpacity(0.1); // Light Rose with low opacity
     } else {

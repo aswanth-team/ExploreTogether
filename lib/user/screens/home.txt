@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
 import 'post_details_screen.dart';
 import 'users_profile_screen.dart';
 import 'users.dart';
@@ -59,14 +58,9 @@ class _HomePageState extends State<HomePage> {
   String filterDuration = '';
   List<Map<String, dynamic>> filteredPosts = [];
   bool isFilterVisible = false;
-  bool isUploadPopupVisible = false;
-  bool isTripImagePopupVisible = false;
-  bool isPostSelected = false;
-  bool isTripImageSelected = false;
 
   // Create a TextEditingController for the search bar
   TextEditingController _searchController = TextEditingController();
-  TextEditingController visitingPlacesController = TextEditingController();
 
   @override
   void initState() {
@@ -118,54 +112,11 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void toggleUploadPopup() {
-    setState(() {
-      isUploadPopupVisible = !isUploadPopupVisible;
-    });
-  }
-
-  void toggleTripImagePopup() {
-    setState(() {
-      isTripImagePopupVisible = !isTripImagePopupVisible;
-    });
-  }
-
-  Future<void> _pickImages(BuildContext context, String type) async {
-    final FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-      allowMultiple: true,
-      onFileLoading: (file) {
-        // Handle file loading progress here if needed
-      },
-    );
-
-    if (result != null) {
-      final List<PlatformFile> images = result.files;
-      // Handle the selected images here
-      // For example: images.forEach((image) => print(image.name));
-    }
-  }
-
-  void _uploadPost() {
-    // Implement the UploadPost function here
-    // ...
-    toggleUploadPopup();
-  }
-
-  void _uploadTripImage() {
-    // Implement the TripImageUpload function here
-    // ...
-    toggleTripImagePopup();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: IconButton(
-          icon: Icon(Icons.add_circle),
-          onPressed: toggleUploadPopup,
-        ),
+        title: Text('Explore'),
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -261,160 +212,6 @@ class _HomePageState extends State<HomePage> {
                         onPressed: toggleFilterPopup,
                         child: Text('Close',
                             style: TextStyle(color: Colors.black)),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          if (isUploadPopupVisible)
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Card(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15)),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TextButton(
-                            onPressed: toggleUploadPopup,
-                            child: Text('Cancel',
-                                style: TextStyle(color: Colors.black)),
-                          ),
-                          TextButton(
-                            onPressed: _uploadPost,
-                            child: Text('Upload',
-                                style: TextStyle(color: Colors.blue)),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                isPostSelected = true;
-                                isTripImageSelected = false;
-                              });
-                              _pickImages(context, 'post');
-                            },
-                            child: Text('Post'),
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                isPostSelected = false;
-                                isTripImageSelected = true;
-                              });
-                              _pickImages(context, 'trip');
-                            },
-                            child: Text('Story'),
-                          ),
-                        ],
-                      ),
-                      if (isPostSelected)
-                        Column(
-                          children: [
-                            SizedBox(height: 10),
-                            // Implement the file upload box for post images here
-                            ElevatedButton(
-                              onPressed: () => _pickImages(context, 'post'),
-                              child: Text('Select Images'),
-                            ),
-                            Text('Location'),
-                            SizedBox(height: 10),
-                            // Implement the location input box with suggestions here
-                            TextField(
-                              controller: visitingPlacesController,
-                              decoration: InputDecoration(
-                                labelText: 'Location',
-                                border: OutlineInputBorder(),
-                              ),
-                            ),
-                            Text('Location Description'),
-                            SizedBox(height: 10),
-                            // Implement the location description input box here
-                            TextField(
-                              decoration: InputDecoration(
-                                labelText: 'Location Description',
-                                border: OutlineInputBorder(),
-                              ),
-                            ),
-                            Text('Trip Duration'),
-                            SizedBox(height: 10),
-                            // Implement the trip duration input box here
-                            TextField(
-                              decoration: InputDecoration(
-                                labelText: 'Trip Duration',
-                                border: OutlineInputBorder(),
-                              ),
-                            ),
-                            Text('Visiting Places'),
-                            SizedBox(height: 10),
-                            // Implement the visiting places input box here
-                            TextField(
-                              controller: visitingPlacesController,
-                              decoration: InputDecoration(
-                                labelText: 'Visiting Places',
-                                border: OutlineInputBorder(),
-                              ),
-                            ),
-                          ],
-                        ),
-                      if (isTripImageSelected)
-                        Column(
-                          children: [
-                            SizedBox(height: 10),
-                            // Implement the file upload box for trip images here
-                            ElevatedButton(
-                              onPressed: () => _pickImages(context, 'trip'),
-                              child: Text('Select Images'),
-                            ),
-                          ],
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          if (isTripImagePopupVisible)
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Card(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15)),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TextButton(
-                            onPressed: toggleTripImagePopup,
-                            child: Text('Cancel',
-                                style: TextStyle(color: Colors.black)),
-                          ),
-                          TextButton(
-                            onPressed: _uploadTripImage,
-                            child: Text('Upload',
-                                style: TextStyle(color: Colors.blue)),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                      // Implement the file upload box for trip images here
-                      ElevatedButton(
-                        onPressed: () => _pickImages(context, 'trip'),
-                        child: Text('Select Images'),
                       ),
                     ],
                   ),
@@ -638,3 +435,22 @@ class _UserPostState extends State<UserPost> {
     );
   }
 }
+
+
+
+
+
+set the upload and cancel button in the bottom of the pop up and set the post and stroy is not a button set is like a upload section in instagram, and if the user sleected post and sent and upload and type data and press upload then it call a fuction postUpload. in that function  that must be save the entered data and image location path on a json file . and the image must be save on the assets folder .
+set a validation that all field in post is uploaded and entered and in the trip duration that only can contain the number and in visiting place ther only enter words(contain numebrs) that seperated by' , ' eg [kannur , nuchiyad, vayathur].  and only 5 or less image can uplaod in file upload if user try to upload more than 5 then show a erro messge , thats conditions is statis filed then enable the upload button.
+
+
+in the loation text input there add a suggustions of all indian place names base of the letters entering.
+
+
+and in story section also add validation that only 5 image can upload at a time .
+
+
+in now there is a problem that wwhen i try to enter the data in the tetx filedd the keybord is pop up at that situation there Showing bottom overflowed by Some pixels , so enable y- overflow on that to prevent that situation
+
+
+give full fixed modifed code

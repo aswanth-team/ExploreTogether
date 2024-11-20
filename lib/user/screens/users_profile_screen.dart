@@ -3,6 +3,7 @@ import 'post_details_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'users.dart';
 
 void main() => runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -20,118 +21,6 @@ class UsersProfilePage extends StatefulWidget {
 
 class _UsersProfilePageState extends State<UsersProfilePage> {
   bool showPosts = true; // Initially, show posts
-
-  // Mock data for users
-  final List<Map<String, dynamic>> users = [
-    {
-      "userImage": "assets/profile/aswanth.webp",
-      "userName": "aswanth123",
-      "userFullName": "Aswanth Kumar",
-      "userBio":
-          "Lover of nature and travel. Always exploring new places and capturing memories. I believe in living life to the fullest. Come join my journey!",
-      "userGender": "Male",
-      "userDOB": "January 1, 1995",
-      "userPosts": [
-        {
-          "tripLocation": "New York",
-          "Tripdescription":
-              "The city that never sleeps. Amazing places to visit!",
-          "locationImages": [
-            "assets/bg2.jpg",
-            "assets/b4.jpg",
-            "assets/bg4.jpg",
-          ],
-          "tripCompleted": true,
-          "tripDuration": 5,
-          "tripRating": 4.5,
-          "tripFeedback": "nice",
-          "postId": "post1"
-        },
-        {
-          "tripLocation": "New York",
-          "Tripdescription":
-              "The city that never sleeps. Amazing places to visit!",
-          "tripDuration": 5,
-          "locationImages": [
-            "assets/bg2.jpg",
-            "assets/b4.jpg",
-            "assets/bg4.jpg",
-          ],
-          "tripCompleted": false,
-          "tripRating": null,
-          "tripFeedback": null,
-          "postId": "post1"
-        }
-      ],
-      "tripPhotos": [
-        'assets/profile/aswanth.webp',
-        "assets/bg2.jpg",
-        "assets/bg4.jpg",
-        "assets/bg4.jpg",
-      ],
-      "userSocialLinks": {
-        "instagram": "https://www.instagram.com/aswanth123",
-        "facebook": "https://www.facebook.com/aswanth.kumar",
-        "gmail": "aswanth.kumar@gmail.com",
-        "twitter": "https://x.com/__x"
-      },
-    },
-    {
-      "userImage": "assets/profile/sagar.jpg",
-      "userName": "sagar123",
-      "userFullName": "Sagar Sree",
-      "userBio":
-          "Lover of nature and travel. Always exploring new places and capturing memories. I believe in living life to the fullest. Come join my journey!",
-      "userGender": "Male",
-      "userDOB": "January 1, 1995",
-      "userPosts": [
-        {
-          "tripLocation": "New York",
-          "Tripdescription":
-              "The city that never sleeps. Amazing places to visit!",
-          "locationImages": [
-            "assets/bg2.jpg",
-            "assets/b4.jpg",
-            "assets/bg4.jpg",
-          ],
-          "tripCompleted": true,
-          "tripDuration": 5,
-          "tripRating": 4.5,
-          "tripFeedback": "nice",
-          "postId": "post1"
-        },
-        {
-          "tripLocation": "New York",
-          "Tripdescription":
-              "The city that never sleeps. Amazing places to visit!",
-          "tripDuration": 5,
-          "locationImages": [
-            "assets/bg2.jpg",
-            "assets/b4.jpg",
-            "assets/bg4.jpg",
-          ],
-          "tripCompleted": false,
-          "tripRating": null,
-          "tripFeedback": null,
-          "postId": "post1"
-        }
-      ],
-      "tripPhotos": [
-        'assets/profile/sagar.jpg',
-        "assets/bg2.jpg",
-        "assets/bg4.jpg",
-        "assets/bg4.jpg",
-      ],
-      "userSocialLinks": {
-        "instagram": "https://www.instagram.com/aswanth123",
-        "facebook": "https://www.facebook.com/aswanth.kumar",
-        "gmail": "aswanth.kumar@gmail.com",
-        "twitter": "https://x.com/__x"
-      },
-    },
-
-    // Add more user data as necessary
-  ];
 
   /// Fetches user data based on the username
   Map<String, dynamic>? getUserData() {
@@ -167,7 +56,10 @@ class _UsersProfilePageState extends State<UsersProfilePage> {
     return Scaffold(
       backgroundColor: userData['userGender']?.toLowerCase() == 'female'
           ? Color.fromRGBO(254, 244, 255, 1) // Pinkish color for female
-          : const Color.fromARGB(255, 242, 255, 255),
+          : userData['userGender']?.toLowerCase() == 'male'
+              ? Color.fromRGBO(220, 240, 255, 1) // Light blue color for male
+              : const Color.fromARGB(
+                  255, 242, 255, 255), // Default color if not female or male
       appBar: AppBar(
         title: Text(userData['userName']),
       ),
@@ -180,24 +72,45 @@ class _UsersProfilePageState extends State<UsersProfilePage> {
               padding: const EdgeInsets.all(16.0),
               child: Row(
                 children: [
-                  Container(
-                    width: 60, // Set the width to match the CircleAvatar's size
-                    height:
-                        60, // Set the height to match the CircleAvatar's size
-                    decoration: BoxDecoration(
-                      shape:
-                          BoxShape.circle, // Ensures the container is circular
-                      border: Border.all(
-                        color:
-                            Colors.black, // Border color (black in this case)
-                        width: 3, // Border width
+                  GestureDetector(
+                    onTap: () {
+                      // Open the full-screen image in a dialog
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return Dialog(
+                            backgroundColor: Colors.transparent,
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.of(context)
+                                    .pop(); // Close the dialog on tap
+                              },
+                              child: InteractiveViewer(
+                                child: Image.asset(
+                                  userData['userImage']!,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    child: Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.black,
+                          width: 3,
+                        ),
                       ),
-                    ),
-                    child: CircleAvatar(
-                      radius:
-                          30, // Half of the width and height of the container
-                      backgroundImage: AssetImage(userData['userImage']),
-                      backgroundColor: Colors.black, // Avatar background color
+                      child: CircleAvatar(
+                        radius: 30,
+                        backgroundImage: AssetImage(userData['userImage']!),
+                        backgroundColor: Colors.black,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -688,8 +601,8 @@ class _UsersProfilePageState extends State<UsersProfilePage> {
                                       ),
                                       Positioned(
                                         top:
-                                            20, // Position the X a bit above the image
-                                        right: 20, // Right side position
+                                            5, // Position the X a bit above the image
+                                        right: 5, // Right side position
                                         child: GestureDetector(
                                           onTap: () {
                                             Navigator.of(context)
