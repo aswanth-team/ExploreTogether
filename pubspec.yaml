@@ -31,6 +31,11 @@ dependencies:
   flutter:
     sdk: flutter
   url_launcher: ^6.3.1
+  flutter_rating_bar: ^4.0.1
+  font_awesome_flutter: ^10.8.0
+  file_picker: ^8.1.4
+  path_provider: ^2.1.5
+  flutter_typeahead: ^5.2.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -40,10 +45,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  smooth_page_indicator: ^1.0.0
-  flutter_rating_bar: ^4.0.1
-  font_awesome_flutter: ^10.8.0
-  file_picker: ^8.1.4
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

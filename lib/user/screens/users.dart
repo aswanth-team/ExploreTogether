@@ -7,6 +7,7 @@ final List<Map<String, dynamic>> users = [
         "Lover of nature and travel. Always exploring new places and capturing memories. I believe in living life to the fullest. Come join my journey!",
     "userGender": "Male",
     "userDOB": "January 1, 1995",
+    "userLocation": ["kerala", "kannur"],
     "userPosts": [
       {
         "postId": "1",
@@ -30,7 +31,7 @@ final List<Map<String, dynamic>> users = [
           'aswanth123'
         ],
         "tripFeedback": "nice",
-        "planToVisitPlaces": ['kollam'],
+        "planToVisitPlaces": ['kollam', 'tesla', 'park'],
         "visitedPlaces": [
           'Kannur',
           'kollam',
@@ -47,7 +48,7 @@ final List<Map<String, dynamic>> users = [
         "tripLocation": "New York",
         "tripLocationDescription":
             "The city that never sleeps. Amazing places to visit!",
-        "tripDuration": 5,
+        "tripDuration": 3,
         "locationImages": [
           "assets/bg2.jpg",
           "assets/b4.jpg",
@@ -57,7 +58,7 @@ final List<Map<String, dynamic>> users = [
         "tripRating": null,
         "tripBuddies": [],
         "tripFeedback": null,
-        "planToVisitPlaces": [],
+        "planToVisitPlaces": ['kollam', 'park', 'lighthouse'],
         "visitedPlaces": [],
       }
     ],
@@ -82,6 +83,7 @@ final List<Map<String, dynamic>> users = [
         "Lover of nature and travel. Always exploring new places and capturing memories. I believe in living life to the fullest. Come join my journey!",
     "userGender": "Male",
     "userDOB": "January 1, 1995",
+    "userLocation": ["Tamilnadu", "chennai"],
     "userPosts": [
       {
         "postId": "1",
@@ -94,7 +96,7 @@ final List<Map<String, dynamic>> users = [
           "assets/bg4.jpg",
         ],
         "tripCompleted": true,
-        "tripDuration": 5,
+        "tripDuration": 6,
         "tripRating": 4.5,
         "tripBuddies": [],
         "tripFeedback": "nice",
@@ -106,7 +108,7 @@ final List<Map<String, dynamic>> users = [
         "tripLocation": "New York",
         "tripLocationDescription":
             "The city that never sleeps. Amazing places to visit!",
-        "tripDuration": 5,
+        "tripDuration": 7,
         "locationImages": [
           "assets/bg2.jpg",
           "assets/bg3.jpg",
@@ -134,3 +136,4 @@ final List<Map<String, dynamic>> users = [
     },
   },
 ];
+
