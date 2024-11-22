@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'post_screen.dart'; // Import PostPage
+import 'packager_screen.dart'; // Import PostPage
 import 'search_screen.dart'; // Import SearchPage
 import 'home_screen.dart'; // Import HomePage
 import 'chat_screen.dart' as chat;
@@ -19,7 +19,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
 
   // List of pages corresponding to each tab
   final List<Widget> _pages = [
-    PostPage(),
+    PackagePage(),
     SearchPage(),
     HomePage(),
     chat.ChatPage(),
@@ -33,6 +33,10 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     });
   }
 
+  
+  static const IconData card_travel = IconData(0xe140, fontFamily: 'MaterialIcons');
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,9 +46,10 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
         onTap: _onItemTapped,
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.add_box),
-            label: 'Post',
-          ),
+  icon: Icon(card_travel), // Use the 'card_travel' icon
+  label: 'Package',
+),
+
           BottomNavigationBarItem(
             icon: Icon(Icons.search),
             label: 'Search',
