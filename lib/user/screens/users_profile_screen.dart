@@ -45,6 +45,16 @@ class _UsersProfilePageState extends State<UsersProfilePage> {
       );
     }
 
+    Color getBorderColor(String gender) {
+      if (gender.toLowerCase() == "male") {
+        return Colors.lightBlue;
+      } else if (gender.toLowerCase() == "female") {
+        return Colors.pinkAccent.shade100;
+      } else {
+        return Colors.yellow.shade600;
+      }
+    }
+
     final List<dynamic> userPosts = userData['userPosts'] ?? [];
     final List<dynamic> tripPhotos = userData['tripPhotos'] ?? [];
 
@@ -86,9 +96,25 @@ class _UsersProfilePageState extends State<UsersProfilePage> {
                                     .pop(); // Close the dialog on tap
                               },
                               child: InteractiveViewer(
-                                child: Image.asset(
-                                  userData['userImage']!,
-                                  fit: BoxFit.cover,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: getBorderColor(userData[
+                                              'userGender'] ??
+                                          ''), // Use gender to determine border color
+                                      width: 1.0, // Set border width
+                                    ),
+                                    borderRadius: BorderRadius.circular(
+                                        8.0), // Optional: Rounded corners
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                        8.0), // Match border radius
+                                    child: Image.asset(
+                                      userData['userImage']!,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
@@ -102,8 +128,9 @@ class _UsersProfilePageState extends State<UsersProfilePage> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: Colors.black,
-                          width: 3,
+                          color: getBorderColor(userData['userGender'] ??
+                              ''), // Dynamically set border color
+                          width: 2, // Border width
                         ),
                       ),
                       child: CircleAvatar(

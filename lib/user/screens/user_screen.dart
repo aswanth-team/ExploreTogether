@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'packager_screen.dart'; // Import PostPage
+import 'travel_guide_screen.dart'; // Import PostPage
 import 'search_screen.dart'; // Import SearchPage
 import 'home_screen.dart'; // Import HomePage
 import 'chat_screen.dart' as chat;
@@ -9,17 +9,17 @@ import 'profile_screen.dart' as profile;
 // for the one in chat_screen.dart // for the one in profile_screen.dart
 // Import ProfilePage
 
-class BottomNavScreen extends StatefulWidget {
+class UserScreen extends StatefulWidget {
   @override
-  _BottomNavScreenState createState() => _BottomNavScreenState();
+  _UserScreenState createState() => _UserScreenState();
 }
 
-class _BottomNavScreenState extends State<BottomNavScreen> {
+class _UserScreenState extends State<UserScreen> {
   int _selectedIndex = 2; // Default to the Home tab
 
   // List of pages corresponding to each tab
   final List<Widget> _pages = [
-    PackagePage(),
+    TravelAgencyPage(),
     SearchPage(),
     HomePage(),
     chat.ChatPage(),
@@ -33,9 +33,8 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     });
   }
 
-  
-  static const IconData card_travel = IconData(0xe140, fontFamily: 'MaterialIcons');
-
+  static const IconData card_travel =
+      IconData(0xe140, fontFamily: 'MaterialIcons');
 
   @override
   Widget build(BuildContext context) {
@@ -46,10 +45,9 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
         onTap: _onItemTapped,
         items: [
           BottomNavigationBarItem(
-  icon: Icon(card_travel), // Use the 'card_travel' icon
-  label: 'Package',
-),
-
+            icon: Icon(card_travel), // Use the 'card_travel' icon
+            label: 'Travel Asists',
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.search),
             label: 'Search',

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/user/screens/login_screen.dart';
+import 'package:flutter_application_1/login_screen.dart';
 
 // This is the RegistrationScreen widget, which is the main screen for user registration
 class RegistrationScreen extends StatefulWidget {

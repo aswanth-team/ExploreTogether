@@ -20,7 +20,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Color getShadowColor(String gender) {
-    if (gender.toLowerCase() == "fale") {
+    if (gender.toLowerCase() == "male") {
       return Colors.lightBlue.withOpacity(0.1); // Light Blue with low opacity
     } else if (gender.toLowerCase() == "female") {
       return Colors.pinkAccent.shade100
@@ -61,8 +61,8 @@ class _SearchPageState extends State<SearchPage> {
           Expanded(
             child: GridView.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 3,
+                crossAxisCount: 1,
+                childAspectRatio: 5, // Decreased the height by adjusting ratio
               ),
               itemCount: filteredUsers.length,
               itemBuilder: (context, index) {
@@ -87,14 +87,13 @@ class _SearchPageState extends State<SearchPage> {
                         user['userGender']), // Shadow color based on gender
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors
-                            .white, // Keep the card color the same (white)
+                        color: Colors.white, // Keep the card color the same
                         borderRadius: BorderRadius.circular(10),
                         boxShadow: [
                           BoxShadow(
                             color: getShadowColor(user['userGender']),
-                            blurRadius: 5,
-                            spreadRadius: 2,
+                            blurRadius: 2.5,
+                            spreadRadius: 1,
                             offset: Offset(0, 2), // Shadow offset
                           ),
                         ],
@@ -102,7 +101,7 @@ class _SearchPageState extends State<SearchPage> {
                       child: Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.all(10.0),
                             child: Container(
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
@@ -120,7 +119,18 @@ class _SearchPageState extends State<SearchPage> {
                           Expanded(
                             child: Text(
                               user['userName'],
-                              style: TextStyle(fontSize: 16),
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold, // Set bold text
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                right: 8.0), // Right padding
+                            child: Icon(
+                              Icons.search, // Search icon
+                              color: Colors.grey,
                             ),
                           ),
                         ],

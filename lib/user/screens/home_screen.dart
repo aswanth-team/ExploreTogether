@@ -1,8 +1,6 @@
 import 'dart:math';
-
+import 'users_posts_screen.dart';
 import 'package:flutter/material.dart';
-import 'post_details_screen.dart';
-import 'users_profile_screen.dart';
 import 'users.dart';
 import 'upload_trip_and_images_screen.dart';
 
@@ -29,15 +27,29 @@ class _HomePageState extends State<HomePage> {
       for (var post in user["userPosts"]) {
         allPosts.add({
           "postId": post["postId"],
-          "images": post["locationImages"],
+          "images": (post["locationImages"] as List<dynamic>?)
+                  ?.where((element) => element != null)
+                  .map((e) => e.toString())
+                  .toList() ??
+              [],
+
           "location": post["tripLocation"],
           "locationDescription": post["tripLocationDescription"],
           "buddyLoaction": post['userLocation'],
           "tripDuration": post["tripDuration"],
           "userImage": user["userImage"],
           "userName": user["userName"],
-          "userVisitingPlaces":
-              post["planToVisitPlaces"], // Use post instead of user
+          "userVisitingPlaces": (post["planToVisitPlaces"] as List<dynamic>?)
+                  ?.where((element) => element != null)
+                  .map((e) => e.toString())
+                  .toList() ??
+              [],
+          // Use post instead of user
+          "userVisitedPlaces": (post["visitedPlaces"] as List<dynamic>?)
+                  ?.where((element) => element != null)
+                  .map((e) => e.toString())
+                  .toList() ??
+              [],
 
           "userGender": user["userGender"],
           "tripCompleted": post["tripCompleted"],
@@ -272,7 +284,7 @@ class _HomePageState extends State<HomePage> {
                               selectedGender = newValue!;
                             });
                           },
-                          items: <String>['All', 'Male', 'Female', 'Others']
+                          items: <String>['All', 'Male', 'Female', 'Other']
                               .map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
@@ -460,220 +472,15 @@ class _HomePageState extends State<HomePage> {
                   tripDuration: post['tripDuration'].toString(),
                   userImage: post['userImage'],
                   userName: post['userName'],
+                  userGender: post['userGender'],
                   tripCompleted: post['tripCompleted'],
+                  userVisitingPlaces: post['userVisitingPlaces'],
+                  userVistedPlaces: post['userVisitedPlaces'],
                 );
               },
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class UserPost extends StatefulWidget {
-  final int index;
-  final String postId; // Add postId here
-  final List<String> images;
-  final String location;
-  final String locationDescription;
-  final String tripDuration;
-  final String userImage;
-  final String userName;
-  final bool tripCompleted;
-
-  UserPost({
-    required this.index,
-    required this.postId, // Accept postId in the constructor
-    required this.images,
-    required this.location,
-    required this.locationDescription,
-    required this.tripDuration,
-    required this.userImage,
-    required this.userName,
-    required this.tripCompleted,
-  });
-
-  @override
-  _UserPostState createState() => _UserPostState();
-}
-
-class _UserPostState extends State<UserPost> {
-  late PageController _pageController;
-  late int _currentPage;
-
-  @override
-  void initState() {
-    super.initState();
-    _pageController = PageController();
-    _currentPage = 0;
-  }
-
-  void _nextImage() {
-    if (_currentPage < widget.images.length - 1) {
-      _pageController.animateToPage(
-        _currentPage + 1,
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeIn,
-      );
-    }
-  }
-
-  void _previousImage() {
-    if (_currentPage > 0) {
-      _pageController.animateToPage(
-        _currentPage - 1,
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeIn,
-      );
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        // Navigate to the post details screen when the card is tapped
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PostDetailScreen(
-              postId: widget.postId,
-              username: widget.userName,
-            ),
-          ),
-        );
-      },
-      child: Card(
-        elevation: 5,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        color: widget.tripCompleted
-            ? Colors.green[100]
-            : Colors.white, // Green if tripCompleted
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      // Navigating to the ProfilePage with the username parameter
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              UsersProfilePage(username: widget.userName),
-                        ),
-                      );
-                    },
-                    child: CircleAvatar(
-                      radius: 25,
-                      backgroundImage: AssetImage(widget.userImage),
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              UsersProfilePage(username: widget.userName),
-                        ),
-                      );
-                    },
-                    child: Text(
-                      widget.userName,
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 10),
-              GestureDetector(
-                onTap: _nextImage,
-                child: Container(
-                  height: 250,
-                  child: Stack(
-                    children: [
-                      PageView.builder(
-                        controller: _pageController,
-                        itemCount: widget.images.length,
-                        onPageChanged: (int page) {
-                          setState(() {
-                            _currentPage = page;
-                          });
-                        },
-                        itemBuilder: (context, index) {
-                          return ClipRRect(
-                            borderRadius: BorderRadius.circular(15),
-                            child: Image.asset(
-                              widget.images[index],
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                            ),
-                          );
-                        },
-                      ),
-                      Positioned(
-                        left: 10,
-                        top: 100,
-                        child: IconButton(
-                          icon: Icon(Icons.arrow_back_ios, color: Colors.white),
-                          onPressed: _previousImage,
-                        ),
-                      ),
-                      Positioned(
-                        right: 10,
-                        top: 100,
-                        child: IconButton(
-                          icon: Icon(Icons.arrow_forward_ios,
-                              color: Colors.white),
-                          onPressed: _nextImage,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: Text(
-                  widget.location,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: Text(
-                  widget.locationDescription,
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ),
-              // Only show trip duration if the trip is not completed
-              if (!widget.tripCompleted)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: Text(
-                    'Duration Plan : ${widget.tripDuration}',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                ),
-              if (widget.tripCompleted)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: Text(
-                    'Trip Completed!',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
       ),
     );
   }
