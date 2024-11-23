@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'users.dart';
+import '../../users.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'users_profile_screen.dart';
 
@@ -230,29 +230,32 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         .center, // Centers content vertically in the column
                     crossAxisAlignment: CrossAxisAlignment
                         .center, // Centers content horizontally in the column
-                    children: [
-                      Text(
-                        'Trip to ${post['tripLocation']}',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 8.0),
-                      // Container ensures wrapping and centers content
-                      Container(
-                        width: MediaQuery.of(context).size.width *
-                            0.8, // Limit width for wrapping
-                        child: Text(
-                          post['tripLocationDescription'],
-                          textAlign: TextAlign
-                              .center, // Ensures the text is centered horizontally
-                          softWrap:
-                              true, // Wrap the text to next line if it overflows
-                          overflow:
-                              TextOverflow.visible, // Prevent overflow clipping
-                        ),
-                      ),
-                      SizedBox(height: 10.0),
-                    ],
+                   children: [
+  Text(
+    'Trip to ${post['tripLocation']}',
+    style: TextStyle(
+      fontSize: 13, 
+      fontWeight: FontWeight.bold,
+    ),
+  ),
+  SizedBox(height: 8.0),
+  // Container ensures wrapping and centers content
+  Container(
+    width: MediaQuery.of(context).size.width * 0.8, // Limit width for wrapping
+    child: Text(
+      post['tripLocationDescription'],
+      textAlign: TextAlign.center, // Ensures the text is centered horizontally
+      softWrap: true, // Wrap the text to next line if it overflows
+      maxLines: 3, // Limit the number of lines
+      overflow: TextOverflow.ellipsis, // Show ellipsis if text overflows
+      style: TextStyle(
+      fontSize: 10, 
+    ),
+    ),
+  ),
+  SizedBox(height: 10.0),
+],
+
                   ),
                 ],
               ),
@@ -271,57 +274,70 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   ),
                 ),
                 SizedBox(height: 8.0),
-                if (planToVisitPlaces.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment
-                              .center, // Centers the text in the middle
-                          children: [
-                            Text(
-                              'Plan To Visit Places:',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: const Color.fromARGB(255, 255, 0, 0),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 8.0),
-                        GridView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 4, // Adjust number of columns
-                            crossAxisSpacing: 8.0,
-                            mainAxisSpacing: 8.0,
-                            childAspectRatio:
-                                2.5, // Smaller aspect ratio for shorter cells
+                if (planToVisitPlaces.isNotEmpty) ...[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Center(
+                        child: Text(
+                          'Visiting Places Plan',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 255, 200, 118),
                           ),
-                          itemCount: visitedPalaces.length,
-                          itemBuilder: (context, index) {
-                            return Container(
-                              padding: EdgeInsets.all(8.0),
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              child: Text(
-                                visitedPalaces[index],
-                                style: TextStyle(fontSize: 8),
-                                textAlign: TextAlign.center,
-                              ),
-                            );
-                          },
                         ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 8.0),
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          // Calculate the number of columns based on available width
+                          final crossAxisCount = (constraints.maxWidth / 100)
+                              .floor(); // Adjust 100 for cell width
+                          return GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount:
+                                  crossAxisCount > 0 ? crossAxisCount : 1,
+                              crossAxisSpacing: 8.0,
+                              mainAxisSpacing: 8.0,
+                              childAspectRatio:
+                                  2, // Adjust to decrease cell height
+                            ),
+                            itemCount: planToVisitPlaces.length,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                padding: const EdgeInsets.all(8.0),
+                                decoration: BoxDecoration(
+                                  color:
+                                      const Color.fromARGB(255, 244, 255, 215),
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    planToVisitPlaces[index],
+                                    style: const TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign
+                                        .center, // Optional for multiline text
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ],
                   ),
+                ), ],
+
                 SizedBox(height: 8.0),
               ],
 
@@ -435,57 +451,69 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         ),
                       SizedBox(height: 15.0),
                       if (visitedPalaces.isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment
-                                    .center, // Centers the text in the middle
-                                children: [
-                                  Text(
-                                    'Visited Places:',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color:
-                                          const Color.fromARGB(255, 255, 0, 0),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 8.0),
-                              GridView.builder(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 4, // Adjust number of columns
-                                  crossAxisSpacing: 8.0,
-                                  mainAxisSpacing: 8.0,
-                                  childAspectRatio:
-                                      2.5, // Smaller aspect ratio for shorter cells
-                                ),
-                                itemCount: visitedPalaces.length,
-                                itemBuilder: (context, index) {
-                                  return Container(
-                                    padding: EdgeInsets.all(8.0),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    child: Text(
-                                      visitedPalaces[index],
-                                      style: TextStyle(fontSize: 8),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
+                         Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Center(
+                        child: Text(
+                          'Visited Places',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 255, 104, 16),
                           ),
                         ),
+                      ),
+                      const SizedBox(height: 8.0),
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          // Calculate the number of columns based on available width
+                          final crossAxisCount = (constraints.maxWidth / 100)
+                              .floor(); // Adjust 100 for cell width
+                          return GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount:
+                                  crossAxisCount > 0 ? crossAxisCount : 1,
+                              crossAxisSpacing: 8.0,
+                              mainAxisSpacing: 8.0,
+                              childAspectRatio:
+                                  2, // Adjust to decrease cell height
+                            ),
+                            itemCount: visitedPalaces.length,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                padding: const EdgeInsets.all(8.0),
+                                decoration: BoxDecoration(
+                                  color:
+                                      const Color.fromARGB(255, 179, 255, 251),
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: Center(
+                                  // Center aligns the text in the middle
+                                  child: Text(
+                                    visitedPalaces[index],
+                                    style: const TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign
+                                        .center, // Optional for multiline text
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
                       SizedBox(height: 8.0),
                       if (tripRating != null)
                         RatingBar.builder(

@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'users_posts_screen.dart';
 import 'package:flutter/material.dart';
-import 'users.dart';
+import '../../users.dart';
 import 'upload_trip_and_images_screen.dart';
 
 class HomePage extends StatefulWidget {

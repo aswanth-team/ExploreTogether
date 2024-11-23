@@ -3,7 +3,7 @@ import 'post_details_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'users.dart';
+import '../../users.dart';
 
 void main() => runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -525,7 +525,7 @@ class _UsersProfilePageState extends State<UsersProfilePage> {
                                       Text(
                                         post['tripLocation'],
                                         style: TextStyle(
-                                            fontWeight: FontWeight.bold),
+                                            fontWeight: FontWeight.bold,fontSize: 10, ),
                                       ),
                                       // "Completed" status text
                                       Text(

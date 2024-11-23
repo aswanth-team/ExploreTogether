@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'users_profile_screen.dart';
-import 'users.dart';
+import '../../users.dart';
 
 class SearchPage extends StatefulWidget {
   @override
