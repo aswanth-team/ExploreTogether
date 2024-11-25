@@ -259,7 +259,7 @@ List<Map<String, dynamic>> users = [
     "userFullName": "Adhrav ",
     "userBio":
         "Lover of nature and travel. Always exploring new places and capturing memories. I believe in living life to the fullest. Come join my journey!",
-    "userGender": "Other",
+    "userGender": "Male",
     "userDOB": "may 22 2004",
     "userLocation": ["kerala", "kannur"],
     "userPosts": [

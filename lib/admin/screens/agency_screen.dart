@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../agencies.dart'; // Your agencies data
 
@@ -51,14 +52,12 @@ class _TravelAgencyPageState extends State<TravelAgencyPage> {
     });
   }
 
-  // Simulated functions to update/remove agencies in the database
   void _updateAgency(Map<String, dynamic> updatedAgency) {
-    // You can replace this function with actual database calls
     print('Agency Updated: ${updatedAgency['agencyName']}');
+    print('All Data: $updatedAgency');
   }
 
   void _removeAgency(int index) {
-    // You can replace this function with actual database calls
     setState(() {
       filteredAgencies.removeAt(index);
     });
@@ -131,14 +130,8 @@ class _TravelAgencyPageState extends State<TravelAgencyPage> {
           Expanded(
             child: RefreshIndicator(
               onRefresh: _refreshData,
-              child: GridView.builder(
+              child: ListView.builder(
                 padding: const EdgeInsets.all(16.0),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 1,
-                  childAspectRatio: 4,
-                  crossAxisSpacing: 16.0,
-                  mainAxisSpacing: 16.0,
-                ),
                 itemCount: filteredAgencies.length,
                 itemBuilder: (context, index) {
                   final agency = filteredAgencies[index];
@@ -166,29 +159,64 @@ class _TravelAgencyPageState extends State<TravelAgencyPage> {
                           ),
                           const SizedBox(width: 16),
                           Expanded(
-                            child: Text(
-                              agency['agencyName']!,
-                              style: const TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  agency['agencyName']!,
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 4),
+                                GestureDetector(
+                                  onTap: () {
+                                    final url = Uri.parse(agency['agencyWeb']!);
+                                    if (url.scheme == 'http' ||
+                                        url.scheme == 'https') {
+                                      launchUrl(
+                                        url,
+                                        mode: LaunchMode.externalApplication,
+                                      ).catchError((error) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                                'Could not open ${url.toString()}'),
+                                          ),
+                                        );
+                                      });
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                              'Invalid URL: ${url.toString()}'),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  child: const Text(
+                                    'Details',
+                                    style: TextStyle(
+                                        color: Colors.blue,
+                                        decoration: TextDecoration.underline),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          Row(
-                            children: [
-                              IconButton(
-                                icon:
-                                    const Icon(Icons.edit, color: Colors.blue),
-                                onPressed: () {
-                                  _showEditPopup(context, agency, index);
-                                },
-                              ),
-                              IconButton(
-                                icon:
-                                    const Icon(Icons.delete, color: Colors.red),
-                                onPressed: () {
-                                  _removeAgency(index);
-                                },
-                              ),
-                            ],
+                          IconButton(
+                            icon: const Icon(Icons.edit, color: Colors.blue),
+                            onPressed: () {
+                              _showEditPopup(context, agency, index);
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () {
+                              _removeAgency(index);
+                            },
                           ),
                         ],
                       ),
@@ -212,125 +240,131 @@ class _TravelAgencyPageState extends State<TravelAgencyPage> {
     TextEditingController categoryController =
         TextEditingController(text: agency['category']);
 
-    // Use the agencyKeywords to initialize the tags list
-    List<String> tags = List<String>.from(agency['agencyKeywords'] ?? []);
+    List<String> originalTags = List<String>.from(agency['agencyKeywords'] ?? []);
+    List<String> tags = List<String>.from(originalTags);
 
-    // Controller for adding new tags
     TextEditingController tagController = TextEditingController();
+    String imageName = agency['agencyImage']!;
+
+    final picker = ImagePicker();
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Edit Agency'),
-          content: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  // Implement image change logic here
-                },
-                child: Row(
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Edit Agency'),
+              content: SingleChildScrollView(
+                child: Column(
                   children: [
-                    CircleAvatar(
-                      backgroundImage: AssetImage(agency['agencyImage']!),
-                      radius: 30,
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundImage: AssetImage(imageName),
+                          radius: 30,
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.edit),
+                          onPressed: () async {
+                            final pickedFile = await picker.pickImage(
+                                source: ImageSource.gallery);
+                            if (pickedFile != null) {
+                              setState(() {
+                                imageName = pickedFile.path;
+                              });
+                            }
+                          },
+                        ),
+                      ],
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.edit),
-                      onPressed: () {
-                        // Logic to update image
+                    TextField(
+                      controller: nameController,
+                      decoration:
+                          const InputDecoration(labelText: 'Agency Name'),
+                    ),
+                    TextField(
+                      controller: webController,
+                      decoration: const InputDecoration(labelText: 'Agency Web'),
+                    ),
+                    TextField(
+                      controller: categoryController,
+                      decoration: const InputDecoration(labelText: 'Category'),
+                    ),
+                    const SizedBox(height: 16),
+                    Wrap(
+                      spacing: 8,
+                      children: tags.map((tag) {
+                        return Chip(
+                          label: Text(tag),
+                          deleteIcon: const Icon(Icons.cancel),
+                          onDeleted: () {
+                            setState(() {
+                              tags.remove(tag);
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                    TextField(
+                      controller: tagController,
+                      decoration: const InputDecoration(
+                          hintText: 'Add keyword (Press Enter or comma)'),
+                      onSubmitted: (value) {
+                        _addTag(value, tags, tagController, setState);
+                      },
+                      onChanged: (value) {
+                        if (value.endsWith(',')) {
+                          _addTag(value, tags, tagController, setState);
+                        }
                       },
                     ),
                   ],
                 ),
               ),
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(labelText: 'Agency Name'),
-              ),
-              TextField(
-                controller: webController,
-                decoration: const InputDecoration(labelText: 'Agency Web URL'),
-              ),
-              TextField(
-                controller: categoryController,
-                decoration: const InputDecoration(labelText: 'Category'),
-              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Map<String, dynamic> updatedAgency = {
+                      'agencyName': nameController.text,
+                      'agencyWeb': webController.text,
+                                           'category': categoryController.text,
+                      'agencyKeywords': tags,
+                      'agencyImage': imageName, // Updated image path
+                    };
 
-              // Displaying existing tags (agencyKeywords) as chips
-              Wrap(
-                spacing: 8.0,
-                children: tags.map((tag) {
-                  return Chip(
-                    label: Text(tag),
-                    deleteIcon: const Icon(Icons.cancel),
-                    onDeleted: () {
-                      setState(() {
-                        tags.remove(tag);
-                      });
-                    },
-                  );
-                }).toList(),
-              ),
-
-              // TextField to input new tags (keywords)
-              TextField(
-                controller: tagController,
-                decoration: const InputDecoration(labelText: 'Keywords (tags)'),
-                onSubmitted: (value) {
-                  if (value.isNotEmpty) {
+                    _updateAgency(updatedAgency); // Call update function
                     setState(() {
-                      tags.add(value);
+                      filteredAgencies[index] = updatedAgency;
                     });
-                    tagController.clear(); // Clear the input after adding
-                  }
-                },
-                onChanged: (value) {
-                  // Optionally handle real-time changes
-                },
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                // Collect all data after editing
-                Map<String, dynamic> updatedAgency = {
-                  'agencyName': nameController.text,
-                  'agencyWeb': webController.text,
-                  'category': categoryController.text,
-                  'agencyKeywords': tags, // Updated tags list
-                  'agencyImage':
-                      agency['agencyImage'], // For now, it stays the same
-                };
 
-                _updateAgency(
-                    updatedAgency); // Update in DB (this is a placeholder function)
-                setState(() {
-                  filteredAgencies[index] = updatedAgency;
-                });
-
-                Navigator.pop(context); // Close the popup
-              },
-              child: const Text('Change'),
-            ),
-          ],
+                    Navigator.pop(context); // Close dialog
+                  },
+                  child: const Text('Change'),
+                ),
+              ],
+            );
+          },
         );
       },
     );
   }
 
-// Placeholder function for updating agency in DB (implement with actual DB logic)
-  //void _updateAgency(Map<String, dynamic> updatedAgency) {
-  // This function should interact with your database and update the agency data
-  //   print('Updated agency: $updatedAgency');
-//  }
+  void _addTag(String value, List<String> tags, TextEditingController controller,
+      Function setState) {
+    String tag = value.trim().replaceAll(',', '');
+    if (tag.isNotEmpty && !tags.contains(tag)) {
+      setState(() {
+        tags.add(tag);
+      });
+    }
+    controller.clear();
+  }
 }
+
