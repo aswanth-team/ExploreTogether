@@ -1,24 +1,11 @@
 import 'package:flutter/material.dart';
-
-// Placeholder Screens for Admin Tabs
-class AssistPostPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text("Assist Post Screen"));
-  }
-}
+import 'analysis_screen.dart';
+import 'agency_screen.dart';
 
 class UsersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(child: Text("Users Screen"));
-  }
-}
-
-class AnalysisPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text("Analysis Screen"));
   }
 }
 
@@ -43,11 +30,11 @@ class AdminScreen extends StatefulWidget {
 }
 
 class _AdminScreenState extends State<AdminScreen> {
-  int _selectedIndex = 0; // Default to the "Assist Post" tab
+  int _selectedIndex = 2; // Default to the "Assist Post" tab
 
   // List of pages corresponding to each tab
   final List<Widget> _pages = [
-    AssistPostPage(),
+    TravelAgencyPage(),
     UsersPage(),
     AnalysisPage(),
     ReportsPage(),
@@ -97,7 +84,6 @@ class _AdminScreenState extends State<AdminScreen> {
     );
   }
 }
-
 
 void main() {
   runApp(MaterialApp(

@@ -1,90 +1,8 @@
-List<Map<String, dynamic>> users = [
-  {
-    "userImage": "assets/profile/aswanth.webp",
-    "userName": "aswanth123",
-    "userMobileNumber" : 85423343242,
-    "userFullName": "Aswanth K",
-    "userBio":
-        "Lover of nature and travel. Always exploring new places and capturing memories. I believe in living life to the fullest. Come join my journey!",
-    "userGender": "Male",
-    "userDOB": "January 1, 1995",
-    "userLocation": ["kerala", "kannur"],
-    "userPosts": [
-      {
-        "postId": "post1",
-        "tripLocation": "Ooty",
-        "tripLocationDescription":
-            "Ooty is a resort town in the Western Ghats mountains, in southern India's Tamil Nadu state.",
-        "locationImages": [
-          "assets/locimage/oo.jfif",
-          "assets/locimage/ooty.webp",
-          "assets/locimage/ootya.jpg",
-        ],
-        "tripCompleted": true,
-        "tripDuration": 5,
-        "tripRating": 4.5,
-        "tripBuddies": [
-          'sagar123',
-          'ajmal12',
-          'vyshnav221',
-        ],
-        "tripFeedback": "Nice Better Experience For Me",
-        "planToVisitPlaces": [
-          'Toy Train',
-          'Ooty Lake',
-          ' Ooty Botanical Gardens',
-          'Ooty Rose Gardens',
-          'Thread Garden',
-          'Doddabetta Peak',
-          'Dolphins Nose'
-        ],
-        "visitedPlaces": [
-          'Toy Trainr',
-          'Doddabetta Peak',
-          'Ooty Botanical Gardens',
-        ],
-      },
-      {
-        "postId": "post2",
-        "tripLocation": "Mount Fuji",
-        "tripLocationDescription":
-            "Japan’s Mt. Fuji is an active volcano about 100 kilometers southwest of Tokyo",
-        "tripDuration": 3,
-        "locationImages": [
-          "assets/locimage/mountfuji1.webp",
-          "assets/locimage/mountfuji2.jpg",
-          "assets/locimage/mountfuji3.jfif",
-        ],
-        "tripCompleted": false,
-        "tripRating": null,
-        "tripBuddies": null,
-        "tripFeedback": null,
-        "planToVisitPlaces": [
-          'Subashiri 5th Station',
-          'Fujinomiya 5th Station',
-          'Snow Town Yeti',
-          'Lake Kawaguchiko'
-        ],
-        "visitedPlaces": null,
-      }
-    ],
-    "tripPhotos": [
-      'assets/profile/aswanth.webp',
-      "assets/locimage/mountfuji22.jfif",
-      "assets/locimage/mountfuji33.jpg",
-      "assets/locimage/mountfuji44.jfif",
-    ],
-    "userSocialLinks": {
-      "instagram": "https://www.instagram.com/a.swnth_",
-      "facebook": "https://www.facebook.com/aswanth.kumar",
-      "gmail": "aswanth.kumar@gmail.com",
-      "twitter": "https://x.com/__x"
-    },
-  },
+List<Map<String, dynamic>> removedusers = [
   {
     "userImage": "assets/profile/sagar.jpg",
     "userName": "sagar123",
-    "userMobileNumber" : 854232123242,
+    "userMobileNumber": 854232123242,
     "userFullName": "Sagar",
     "userBio":
         "Lover of nature and travel. Always exploring new places and capturing memories. I believe in living life to the fullest. Come join my journey!",
@@ -169,7 +87,7 @@ List<Map<String, dynamic>> users = [
   {
     "userImage": "assets/profile/vyshnav.png",
     "userName": "Vyshnav231",
-    "userMobileNumber" : 852312312242,
+    "userMobileNumber": 852312312242,
     "userFullName": "Vyshnav Das ",
     "userBio":
         "Lover of nature and travel. Always exploring new places and capturing memories. I believe in living life to the fullest. Come join my journey!",
@@ -254,8 +172,7 @@ List<Map<String, dynamic>> users = [
   {
     "userImage": "assets/profile/adhravv.png",
     "userName": "adhrav12",
-
-    "userMobileNumber" : 1231313242,
+    "userMobileNumber": 1231313242,
     "userFullName": "Adhrav ",
     "userBio":
         "Lover of nature and travel. Always exploring new places and capturing memories. I believe in living life to the fullest. Come join my journey!",

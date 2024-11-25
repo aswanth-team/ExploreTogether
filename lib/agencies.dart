@@ -218,7 +218,7 @@ List<Map<String, dynamic>> agencies = [
       'local dining',
       'food discovery'
     ],
-    'category': 'Food Delivery / Restaurant Booking'
+    'category': 'Food Delivery'
   },
   {
     'agencyName': 'Swiggy',

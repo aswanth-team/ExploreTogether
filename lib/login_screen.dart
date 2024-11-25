@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/user/screens/registration_screen.dart'; // Import the RegistrationScreen for navigation
-import 'package:flutter_application_1/user/screens/user_screen.dart'; // Import the HomeScreen after login
+import 'package:flutter_application_1/user/screens/user_screen.dart';
 import 'package:flutter_application_1/admin/screens/admin_screen.dart';
 
 // LoginScreen widget where users can log in with their credentials
@@ -46,24 +46,21 @@ class _LoginScreenState extends State<LoginScreen> {
       print("Username/Email: ${usernameController.text}");
       print("Password: ${passwordController.text}");
 
-      if (usernameController == "admin.exploretogether.login" && passwordController == "password"){
-
-Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                AdminScreen()), // Replace HomeScreen with your actual home page widget
-      );
-      }
-      else{
-
-      // Navigate to the home screen after successful login
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                UserScreen()), // Replace HomeScreen with your actual home page widget
-      );
+      if (usernameController == "login" && passwordController == "password") {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  AdminScreen()), // Replace HomeScreen with your actual home page widget
+        );
+      } else {
+        // Navigate to the home screen after successful login
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  UserScreen()), // Replace HomeScreen with your actual home page widget
+        );
       }
     }
   }

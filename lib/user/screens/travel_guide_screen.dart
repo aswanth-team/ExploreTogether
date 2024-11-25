@@ -27,6 +27,12 @@ class _TravelAgencyPageState extends State<TravelAgencyPage> {
     filteredAgencies = agencies; // Initially, show all agencies
   }
 
+  // Extract unique categories dynamically from the agencies list
+  List<String> getCategories() {
+    final categories = agencies.map((agency) => agency['category']).toSet();
+    return ['All', ...categories]; // Add 'All' as the default option
+  }
+
   // Update filtered agencies based on search and category
   void _filterAgencies(String query) {
     setState(() {
@@ -41,15 +47,17 @@ class _TravelAgencyPageState extends State<TravelAgencyPage> {
     });
   }
 
+  Future<void> _refreshData() async {
+    await Future.delayed(const Duration(seconds: 2));
+    // In a real-world app, you'd fetch new data here
+    setState(() {
+      filteredAgencies = agencies; // Reset to original agencies data
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final List<String> categories = [
-      'All',
-      'Travel Agencies',
-      'Transport',
-      'Hotels',
-      'Flights'
-    ];
+    final List<String> categories = getCategories();
 
     return Scaffold(
       appBar: AppBar(
@@ -116,76 +124,79 @@ class _TravelAgencyPageState extends State<TravelAgencyPage> {
 
           // Filtered Results
           Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.all(16.0),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 1,
-                childAspectRatio: 4,
-                crossAxisSpacing: 16.0,
-                mainAxisSpacing: 16.0,
-              ),
-              itemCount: filteredAgencies.length,
-              itemBuilder: (context, index) {
-                final agency = filteredAgencies[index];
-                return GestureDetector(
-                  onTap: () {
-                    final url = Uri.parse(agency['agencyWeb']!);
-                    if (url.scheme == 'http' || url.scheme == 'https') {
-                      // Launch in an external browser
-                      launchUrl(
-                        url,
-                        mode: LaunchMode.externalApplication,
-                      ).catchError((error) {
-                        // Optional: Handle errors gracefully
+            child: RefreshIndicator(
+              onRefresh: _refreshData, // Call the refresh method
+              child: GridView.builder(
+                padding: const EdgeInsets.all(16.0),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 1,
+                  childAspectRatio: 4,
+                  crossAxisSpacing: 16.0,
+                  mainAxisSpacing: 16.0,
+                ),
+                itemCount: filteredAgencies.length,
+                itemBuilder: (context, index) {
+                  final agency = filteredAgencies[index];
+                  return GestureDetector(
+                    onTap: () {
+                      final url = Uri.parse(agency['agencyWeb']!);
+                      if (url.scheme == 'http' || url.scheme == 'https') {
+                        // Launch in an external browser
+                        launchUrl(
+                          url,
+                          mode: LaunchMode.externalApplication,
+                        ).catchError((error) {
+                          // Optional: Handle errors gracefully
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content:
+                                    Text('Could not open ${url.toString()}')),
+                          );
+                        });
+                      } else {
+                        // Handle unsupported URLs
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                              content:
-                                  Text('Could not open ${url.toString()}')),
+                              content: Text('Invalid URL: ${url.toString()}')),
                         );
-                      });
-                    } else {
-                      // Handle unsupported URLs
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                            content: Text('Invalid URL: ${url.toString()}')),
-                      );
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      color: Colors.grey[100],
-                      boxShadow: [
-                        BoxShadow(
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                          color: Colors.black.withOpacity(0.1),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          agency['agencyImage']!,
-                          width: 50,
-                          height: 50,
-                          fit: BoxFit.cover,
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Text(
-                            agency['agencyName']!,
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
+                        color: Colors.grey[100],
+                        boxShadow: [
+                          BoxShadow(
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                            color: Colors.black.withOpacity(0.1),
                           ),
-                        ),
-                        const Icon(Icons.arrow_forward, color: Colors.blue),
-                      ],
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            agency['agencyImage']!,
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Text(
+                              agency['agencyName']!,
+                              style: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          const Icon(Icons.arrow_forward, color: Colors.blue),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
         ],
