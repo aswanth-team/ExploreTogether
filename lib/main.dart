@@ -6,7 +6,7 @@ import 'package:flutter_application_1/admin/screens/admin_screen.dart';
 
 void main() {
   runApp(MaterialApp(
-    home: UserScreen(),
+    home: AdminScreen(),
     debugShowCheckedModeBanner: false,
   ));
 }
