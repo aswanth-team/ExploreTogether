@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
 import 'analysisScreen/analysis_screen.dart';
 import 'tripAssistScreen/agency_screen.dart';
-=======
-import 'analysis_screen.dart';
-import 'agency_screen.dart';
-import 'users_sceen.dart';
->>>>>>> f9428c0c0783c8d977e86e1733b820dc23ef0902
 
+class UsersPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Text("Users Screen"));
+  }
+}
 
 class ReportsPage extends StatelessWidget {
   @override
@@ -35,7 +35,7 @@ class _AdminScreenState extends State<AdminScreen> {
   // List of pages corresponding to each tab
   final List<Widget> _pages = [
     TravelAgencyPage(),
-    UserPage(),
+    UsersPage(),
     AnalysisPage(),
     ReportsPage(),
     MessagesPage(),
