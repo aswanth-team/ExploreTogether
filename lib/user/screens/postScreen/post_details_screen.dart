@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../users.dart';
+import '../../../users.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'users_profile_screen.dart';
+import '../userDetailsScreen/user_details_screen.dart';
 
 void main() => runApp(MaterialApp(
     debugShowCheckedModeBanner: false,

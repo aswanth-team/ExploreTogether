@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'upload_trip_and_images_screen.dart';
+import 'uploadScreen/upload_trip_and_images_screen.dart';
 
 void main() {
   runApp(const MyApp());

@@ -1,8 +1,8 @@
-import 'post_details_screen.dart';
-import 'users_profile_screen.dart';
+import '../postScreen/post_details_screen.dart';
+import '../userDetailsScreen/user_details_screen.dart';
 import 'package:flutter/material.dart';
 
-class UserPost extends StatefulWidget {
+class UsersPosts extends StatefulWidget {
   final int index;
   final String postId; // Add postId here
   final List<String> images;
@@ -16,7 +16,7 @@ class UserPost extends StatefulWidget {
   final List<String> userVisitingPlaces;
   final List<String> userVistedPlaces;
 
-  UserPost({
+  UsersPosts({
     required this.index,
     required this.postId, // Accept postId in the constructor
     required this.images,
@@ -32,10 +32,10 @@ class UserPost extends StatefulWidget {
   });
 
   @override
-  _UserPostState createState() => _UserPostState();
+  _UsersPostsState createState() => _UsersPostsState();
 }
 
-class _UserPostState extends State<UserPost> {
+class _UsersPostsState extends State<UsersPosts> {
   late PageController _pageController;
   late int _currentPage;
 

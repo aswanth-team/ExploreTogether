@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'analysis_screen.dart';
-import 'agency_screen.dart';
+import 'analysisScreen/analysis_screen.dart';
+import 'tripAssistScreen/agency_screen.dart';
 
 class UsersPage extends StatelessWidget {
   @override
@@ -55,6 +55,10 @@ class _AdminScreenState extends State<AdminScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
+        iconSize: 20, // Default size for unselected icons
+        selectedIconTheme: IconThemeData(
+          size: 32, // Slightly larger size for selected icon
+        ),
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.post_add),

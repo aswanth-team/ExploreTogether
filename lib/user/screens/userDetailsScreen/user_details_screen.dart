@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'post_details_screen.dart';
+import '../postScreen/post_details_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../users.dart';
+import '../../../users.dart';
 
 void main() => runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -515,28 +515,30 @@ class _UsersProfilePageState extends State<UsersProfilePage> {
                                     width: double.infinity,
                                   ),
                                 ),
+
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                        CrossAxisAlignment.center,
                                     children: [
-                                      // Location text
-                                      Text(
-                                        post['tripLocation'],
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,fontSize: 10, ),
-                                      ),
-                                      // "Completed" status text
-                                      Text(
-                                        'Completed: ${(post['tripCompleted'] ?? false) ? '✔️' : '❌'}',
-                                        style: TextStyle(
-                                          fontSize:
-                                              12, // Font size for "Completed"
+                                      Center(
+                                        child: Text(
+                                          post['tripLocation'],
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 15,
+                                          ),
                                         ),
                                       ),
+                                      //Text(
+                                      //'Completed: ${(post['tripCompleted'] ?? false) ? '✔️' : '❌'}',
+                                      //  style: TextStyle(
+                                      //    fontSize:
+                                      //         12, // Font size for "Completed"
+                                      //   ),
+                                      // ),
                                       if (post['tripCompleted'] ?? false)
-                                        // Rating bar (only visible if completed)
                                         RatingBar.builder(
                                           initialRating:
                                               post['tripRating'] ?? 0,
@@ -546,10 +548,8 @@ class _UsersProfilePageState extends State<UsersProfilePage> {
                                           allowHalfRating: true,
                                           itemCount: 5,
                                           itemBuilder: (context, _) =>
-                                              const Icon(
-                                            Icons.star,
-                                            color: Colors.yellow,
-                                          ),
+                                              const Icon(Icons.star,
+                                                  color: Colors.yellow),
                                           onRatingUpdate: (rating) {
                                             print(rating);
                                           },

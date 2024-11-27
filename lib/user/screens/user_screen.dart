@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'travel_guide_screen.dart'; // Import PostPage
-import 'search_screen.dart'; // Import SearchPage
-import 'home_screen.dart'; // Import HomePage
-import 'chat_screen.dart' as chat;
-import 'profile_screen.dart' as profile;
+import 'tripAssistScreen/travel_guide_screen.dart'; // Import PostPage
+import 'userSearchScreen/user_search_screen.dart'; // Import SearchPage
+import 'homeScreen/home_screen.dart'; // Import HomePage
+import 'chatScreen/chat_screen.dart' as chat;
+import 'profileScreen/profile_screen.dart' as profile;
 
 // When referring to `ChatPage`, use the alias like this:
 // for the one in chat_screen.dart // for the one in profile_screen.dart
@@ -43,6 +43,10 @@ class _UserScreenState extends State<UserScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
+        iconSize: 20, // Default size for unselected icons
+        selectedIconTheme: IconThemeData(
+          size: 32, // Slightly larger size for selected icon
+        ),
         items: [
           BottomNavigationBarItem(
             icon: Icon(card_travel), // Use the 'card_travel' icon

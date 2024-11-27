@@ -1,8 +1,11 @@
 import 'dart:math';
-import 'users_posts_screen.dart';
+import 'package:flutter_application_1/user/screens/uploadScreen/image_upload_screen.dart';
+import 'package:flutter_application_1/user/screens/uploadScreen/post_upload_screen.dart';
+
+import 'home_posts_screen.dart';
 import 'package:flutter/material.dart';
-import '../../users.dart';
-import 'upload_trip_and_images_screen.dart';
+import '../../../users.dart';
+import '../uploadScreen/upload_trip_and_images_screen.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -221,6 +224,20 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  // Pull-to-refresh callback method
+  Future<void> _refreshPosts() async {
+    setState(() {
+      selectedGender = 'All';
+      selectedCompletionStatus = 'All';
+      tripDuration = '';
+      tripDurationController.clear();
+      // Reload the posts data (or fetch fresh data if from an API)
+      posts = _generatePostFeed(users); // Refresh posts
+      searchResults = posts;
+      filteredPosts = posts;
+    });
+  }
+
   void showFilterPopup() {
     showDialog(
       context: context,
@@ -341,6 +358,89 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Map<String, dynamic> userData = {
+    "userImage": "assets/profile/aswanth.webp",
+    "userName": "aswanth123",
+    "userMobileNumber": 85423343242,
+    "userFullName": "Aswanth K",
+    "userBio":
+        "Lover of nature and travel. Always exploring new places and capturing memories. I believe in living life to the fullest. Come join my journey!",
+    "userGender": "Male",
+    "userDOB": "January 1, 1995",
+    "userLocation": ["kerala", "kannur"],
+    "userPosts": [
+      {
+        "postId": "post1",
+        "tripLocation": "Ooty",
+        "tripLocationDescription":
+            "Ooty is a resort town in the Western Ghats mountains, in southern India's Tamil Nadu state.",
+        "locationImages": [
+          "assets/locimage/oo.jfif",
+          "assets/locimage/ooty.webp",
+          "assets/locimage/ootya.jpg",
+        ],
+        "tripCompleted": true,
+        "tripDuration": 5,
+        "tripRating": 4.5,
+        "tripBuddies": [
+          'sagar123',
+          'ajmal12',
+          'vyshnav221',
+        ],
+        "tripFeedback": "Nice Better Experience For Me",
+        "planToVisitPlaces": [
+          'Toy Train',
+          'Ooty Lake',
+          ' Ooty Botanical Gardens',
+          'Ooty Rose Gardens',
+          'Thread Garden',
+          'Doddabetta Peak',
+          'Dolphins Nose'
+        ],
+        "visitedPlaces": [
+          'Toy Trainr',
+          'Doddabetta Peak',
+          'Ooty Botanical Gardens',
+        ],
+      },
+      {
+        "postId": "post2",
+        "tripLocation": "Mount Fuji",
+        "tripLocationDescription":
+            "Japan’s Mt. Fuji is an active volcano about 100 kilometers southwest of Tokyo",
+        "tripDuration": 3,
+        "locationImages": [
+          "assets/locimage/mountfuji1.webp",
+          "assets/locimage/mountfuji2.jpg",
+          "assets/locimage/mountfuji3.jfif",
+        ],
+        "tripCompleted": false,
+        "tripRating": null,
+        "tripBuddies": null,
+        "tripFeedback": null,
+        "planToVisitPlaces": [
+          'Subashiri 5th Station',
+          'Fujinomiya 5th Station',
+          'Snow Town Yeti',
+          'Lake Kawaguchiko'
+        ],
+        "visitedPlaces": null,
+      }
+    ],
+    "tripPhotos": [
+      'assets/profile/aswanth.webp',
+      "assets/locimage/mountfuji22.jfif",
+      "assets/locimage/mountfuji33.jpg",
+      "assets/locimage/mountfuji44.jfif",
+    ],
+    "userSocialLinks": {
+      "instagram": "https://www.instagram.com/a.swnth_",
+      "facebook": "https://www.facebook.com/aswanth.kumar",
+      "gmail": "aswanth.kumar@gmail.com",
+      "twitter": "https://x.com/__x"
+    },
+  };
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -439,16 +539,16 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            IconButton(
-              icon: Icon(
-                Icons.add_circle,
-                size: 30,
-                color: Colors.blueAccent,
-              ),
-              onPressed: () {
-                print("Add button pressed");
-              },
-            ),
+            //IconButton(
+            //    icon: Icon(
+            //        Icons.add_circle,
+            //      size: 30,
+            //      color: Colors.blueAccent,
+            //    ),
+            //   onPressed: () {
+            //     print("Add button pressed");
+            //    },
+            //  ),
             IconButton(
               icon: Icon(Icons.filter_list),
               onPressed: showFilterPopup,
@@ -456,31 +556,84 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: filteredPosts.length,
-              itemBuilder: (context, index) {
-                final post = filteredPosts[index];
-                return UserPost(
-                  index: index,
-                  postId: post['postId'], // Pass postId here
-                  images: post['images'],
-                  location: post['location'],
-                  locationDescription: post['locationDescription'],
-                  tripDuration: post['tripDuration'].toString(),
-                  userImage: post['userImage'],
-                  userName: post['userName'],
-                  userGender: post['userGender'],
-                  tripCompleted: post['tripCompleted'],
-                  userVisitingPlaces: post['userVisitingPlaces'],
-                  userVistedPlaces: post['userVisitedPlaces'],
-                );
-              },
+      body: RefreshIndicator(
+        onRefresh: _refreshPosts, // Refresh callback
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: filteredPosts.length,
+                    itemBuilder: (context, index) {
+                      final post = filteredPosts[index];
+                      return UsersPosts(
+                        index: index,
+                        postId: post['postId'], // Pass postId here
+                        images: post['images'],
+                        location: post['location'],
+                        locationDescription: post['locationDescription'],
+                        tripDuration: post['tripDuration'].toString(),
+                        userImage: post['userImage'],
+                        userName: post['userName'],
+                        userGender: post['userGender'],
+                        tripCompleted: post['tripCompleted'],
+                        userVisitingPlaces: post['userVisitingPlaces'],
+                        userVistedPlaces: post['userVisitedPlaces'],
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
+            /*     Positioned(
+              bottom: 20,
+              right: 20,
+              child: FloatingActionButton(
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ListTile(
+                            title: Text("Post"),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      PostUploadScreen(username: "aswanth123"),
+                                ),
+                              );
+                            },
+                          ),
+                          ListTile(
+                            title: Text("Image"),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      ImageUploadScreen(username: "aswanth123"),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                child: Icon(Icons.add),
+                backgroundColor: Colors.blueAccent,
+                mini: true,
+                shape: CircleBorder(),
+              ),
+            ),*/
+          ],
+        ),
       ),
     );
   }
