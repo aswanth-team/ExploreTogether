@@ -4,7 +4,7 @@ import 'package:flutter_application_1/user/screens/uploadScreen/post_upload_scre
 
 import 'home_posts_screen.dart';
 import 'package:flutter/material.dart';
-import '../../../users.dart';
+import '../../../data/users.dart';
 import '../uploadScreen/upload_trip_and_images_screen.dart';
 
 class HomePage extends StatefulWidget {

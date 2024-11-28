@@ -46,20 +46,22 @@ class _LoginScreenState extends State<LoginScreen> {
       print("Username/Email: ${usernameController.text}");
       print("Password: ${passwordController.text}");
 
-      if (usernameController == "login" && passwordController == "password") {
+      // Check the values of username and password (text properties, not the controllers themselves)
+      if (usernameController.text == "login" &&
+          passwordController.text == "password") {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  AdminScreen()), // Replace HomeScreen with your actual home page widget
+            builder: (context) => AdminScreen(),
+          ),
         );
       } else {
-        // Navigate to the home screen after successful login
+        // Navigate to the user screen after successful login
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  UserScreen()), // Replace HomeScreen with your actual home page widget
+            builder: (context) => UserScreen(),
+          ),
         );
       }
     }

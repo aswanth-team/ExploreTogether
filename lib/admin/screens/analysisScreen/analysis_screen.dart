@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import '../../../users.dart';
-import '../../../removedusers.dart';
+import '../../../data/users.dart';
+import '../../../data/removedusers.dart';
 
 class AnalysisPage extends StatelessWidget {
   @override

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/admin/screens/messageScreen/sent_message_screen.dart';
 import 'analysisScreen/analysis_screen.dart';
 import 'tripAssistScreen/agency_screen.dart';
+import 'usersScreen/all_user_screen.dart';
 
 class UsersPage extends StatelessWidget {
   @override
@@ -16,13 +18,6 @@ class ReportsPage extends StatelessWidget {
   }
 }
 
-class MessagesPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text("Messages Screen"));
-  }
-}
-
 // Admin Screen with Bottom Navigation Bar
 class AdminScreen extends StatefulWidget {
   @override
@@ -35,10 +30,10 @@ class _AdminScreenState extends State<AdminScreen> {
   // List of pages corresponding to each tab
   final List<Widget> _pages = [
     TravelAgencyPage(),
-    UsersPage(),
+    UserSearchPage(),
     AnalysisPage(),
     ReportsPage(),
-    MessagesPage(),
+    SentMessagePage(),
   ];
 
   // Function to switch between tabs
@@ -62,7 +57,7 @@ class _AdminScreenState extends State<AdminScreen> {
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.post_add),
-            label: 'Assist Post',
+            label: 'Trip Assist',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.people),

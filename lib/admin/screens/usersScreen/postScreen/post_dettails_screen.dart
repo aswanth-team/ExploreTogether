@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../users.dart';
+import 'package:flutter_application_1/admin/screens/usersScreen/user_profile_screen.dart';
+import 'package:flutter_application_1/data/removedusers.dart';
+import 'package:flutter_application_1/data/users.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'users_sceen.dart';
-import 'user_details_screen.dart';
 
 void main() => runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
@@ -28,16 +28,34 @@ class PostDetailScreen extends StatefulWidget {
 class _PostDetailScreenState extends State<PostDetailScreen> {
   int currentIndex = 0;
 
-  // Method to fetch user data by username
   Map<String, dynamic>? getUserData(String username) {
     try {
+      // First, search in the `users` list
       return users.firstWhere(
         (user) => user['userName'] == username,
       );
     } catch (e) {
-      return null; // If no user is found, return null
+      // If not found in `users`, search in `removedusers`
+      try {
+        return removedusers.firstWhere(
+          (user) => user['userName'] == username,
+        );
+      } catch (e) {
+        return null; // Return null if no user is found in either list
+      }
     }
   }
+
+  // Method to fetch user data by username
+  //Map<String, dynamic>? getUserData(String username) {
+  // try {
+  //   return users.firstWhere(
+  //    (user) => user['userName'] == username,
+  //  );
+  //} catch (e) {
+  //  return null; // If no user is found, return null
+  // }
+  //}
 
   Map<String, dynamic>? getPostData(String username, String postId) {
     final user = getUserData(username);
@@ -104,8 +122,10 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => UsersDetailsPage(
-                            username: user['userName'], // Passing username
+                          builder: (context) => UserProfilePage(
+                            username: user['userName'],
+                            isRemoved:
+                                removedusers.contains(user), // Passing username
                           ),
                         ),
                       );
@@ -416,8 +436,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => UsersDetailsPage(
+                                    builder: (context) => UserProfilePage(
                                       username: buddy['userName'],
+                                      isRemoved: removedusers.contains(user),
                                     ),
                                   ),
                                 );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../agencies.dart';
+import '../../../data/agencies.dart';
 
 void main() {
   runApp(const MaterialApp(

@@ -1,5 +1,5 @@
-import '../postScreen/post_details_screen.dart';
-import '../userDetailsScreen/user_details_screen.dart';
+import 'package:flutter_application_1/user/screens/postScreen/post_details_screen.dart';
+import 'package:flutter_application_1/user/screens/userDetailsScreen/user_details_screen.dart';
 import 'package:flutter/material.dart';
 
 class UsersPosts extends StatefulWidget {

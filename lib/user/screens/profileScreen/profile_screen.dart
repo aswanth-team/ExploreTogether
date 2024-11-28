@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/user/screens/profileScreen/post_complete_screen.dart';
+import 'package:flutter_application_1/user/screens/profileScreen/settingScreen/settings_screen.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io'; // Required for File Handling
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import '../postScreen/post_details_screen.dart';
 
@@ -108,25 +107,8 @@ class _ProfilePageState extends State<ProfilePage> {
   final List<dynamic> userPosts = userData['userPosts'] ?? [];
   final List<dynamic> tripPhotos = userData['tripPhotos'] ?? [];
   bool showPosts = true;
-  // Update profile details
-  void updateProfileDetails(Map<String, dynamic> updatedData) {
-    setState(() {
-      userData = updatedData;
-    });
-  }
 
-  // Function to handle image picking and updating
-  Future<void> pickImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        userData['userImage'] = pickedFile.path;
-      });
-    }
-  }
-
-  void deleteTripPhoto(String photoPath, String username) {
+  void deleteTripPhoto(String photoPath, String username, int index) {
     // Remove the photo from the UI
     setState(() {
       tripPhotos.remove(photoPath);
@@ -134,7 +116,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     // Call your backend function to delete the photo from the database
     // Your function to delete the trip photo from the database goes here
-    print('Deleted trip photo: $photoPath by $username');
+    print('Deleted trip photo: $photoPath by $username in $index');
   }
 
   void deletePost(String postId, String username) {
@@ -146,161 +128,6 @@ class _ProfilePageState extends State<ProfilePage> {
     // Call your backend function to delete the post from the database
     // Your function to delete the post from the database goes here
     print('Deleted post: $postId by $username');
-  }
-
-  // Edit profile dialog
-  void editProfile() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        TextEditingController fullNameController =
-            TextEditingController(text: userData['userFullName']);
-        TextEditingController bioController =
-            TextEditingController(text: userData['userBio']);
-        TextEditingController locationController =
-            TextEditingController(text: userData['userLocation']);
-        TextEditingController instagramController = TextEditingController(
-            text: userData['userSocialLinks']['instagram']);
-        TextEditingController facebookController = TextEditingController(
-            text: userData['userSocialLinks']['facebook']);
-        TextEditingController gmailController =
-            TextEditingController(text: userData['userSocialLinks']['gmail']);
-        TextEditingController twitterController =
-            TextEditingController(text: userData['userSocialLinks']['twitter']);
-        String gender = userData['userGender'];
-        DateTime selectedDate = DateTime.tryParse(userData['userDOB']) ??
-            DateTime(1995, 1, 1); // Default date
-
-        return StatefulBuilder(
-          builder: (context, setState) => AlertDialog(
-            title: const Text("Edit Profile"),
-            content: SingleChildScrollView(
-              child: Column(
-                children: [
-                  // Display the username (disabled)
-                  TextField(
-                    controller:
-                        TextEditingController(text: userData['userName']),
-                    decoration: const InputDecoration(labelText: "Username"),
-                    enabled: false, // Make the username field read-only
-                  ),
-                  const SizedBox(height: 16),
-                  GestureDetector(
-                    onTap: pickImage,
-                    child: CircleAvatar(
-                      radius: 50,
-                      backgroundImage:
-                          userData['userImage']!.startsWith("assets")
-                              ? AssetImage(userData['userImage']!)
-                              : FileImage(File(userData['userImage']!))
-                                  as ImageProvider,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                      controller: fullNameController,
-                      decoration:
-                          const InputDecoration(labelText: "Full Name")),
-                  const SizedBox(height: 8),
-                  TextField(
-                      controller: bioController,
-                      decoration: const InputDecoration(labelText: "Bio")),
-                  const SizedBox(height: 8),
-                  TextField(
-                      controller: locationController,
-                      decoration: const InputDecoration(labelText: "Location")),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      const Text("DOB:"),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Text("${selectedDate.toLocal()}".split(' ')[0],
-                            style: const TextStyle(fontSize: 16)),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.calendar_today),
-                        onPressed: () async {
-                          DateTime? picked = await showDatePicker(
-                            context: context,
-                            initialDate: selectedDate,
-                            firstDate: DateTime(1900),
-                            lastDate: DateTime.now(),
-                          );
-                          if (picked != null) {
-                            setState(() {
-                              selectedDate = picked;
-                            });
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  DropdownButtonFormField<String>(
-                    value: gender,
-                    decoration: const InputDecoration(labelText: "Gender"),
-                    items: const [
-                      DropdownMenuItem(value: "Male", child: Text("Male")),
-                      DropdownMenuItem(value: "Female", child: Text("Female")),
-                      DropdownMenuItem(value: "Other", child: Text("Other")),
-                    ],
-                    onChanged: (String? value) {
-                      setState(() {
-                        gender = value!;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                      controller: instagramController,
-                      decoration:
-                          const InputDecoration(labelText: "Instagram")),
-                  TextField(
-                      controller: facebookController,
-                      decoration: const InputDecoration(labelText: "Facebook")),
-                  TextField(
-                      controller: gmailController,
-                      decoration: const InputDecoration(labelText: "Gmail")),
-                  TextField(
-                      controller: twitterController,
-                      decoration: const InputDecoration(labelText: "Twitter")),
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text("Cancel")),
-              TextButton(
-                onPressed: () {
-                  Map<String, dynamic> updatedData = {
-                    'userName': userData['userName'], // Include username here
-                    'userFullName': fullNameController.text,
-                    'userBio': bioController.text,
-                    'userLocation': locationController.text,
-                    'userGender': gender,
-                    'userDOB': "${selectedDate.toLocal()}".split(' ')[0],
-                    'userSocialLinks': {
-                      'instagram': instagramController.text,
-                      'facebook': facebookController.text,
-                      'gmail': gmailController.text,
-                      'twitter': twitterController.text,
-                    },
-                    'userImage': userData['userImage'],
-                  };
-                  updateProfileDetails(updatedData); // Update the profile
-                  Navigator.pop(context); // Close dialog
-                  print(
-                      updatedData); // Print the updated data (this will include username)
-                },
-                child: const Text("Save"),
-              ),
-            ],
-          ),
-        );
-      },
-    );
   }
 
   Color getBorderColor(String gender) {
@@ -319,7 +146,30 @@ class _ProfilePageState extends State<ProfilePage> {
     final int completedPosts =
         userPosts.where((post) => post['tripCompleted'] == true).length;
     return Scaffold(
-      appBar: AppBar(title: Text(userData['userName'])),
+      appBar: AppBar(
+        title: Text(userData['userName']),
+        actions: [
+          // Notification Icon (Left Side)
+          IconButton(
+            icon: Icon(Icons.notifications),
+            onPressed: () {
+              // Handle notification press (if required)
+              // For example, navigate to a notifications page
+            },
+          ),
+          // Burger Icon (Right Side)
+          IconButton(
+            icon: Icon(Icons.menu),
+            onPressed: () {
+              // Navigate to the settings page when burger icon is pressed
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SettingsPage()),
+              );
+            },
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -568,7 +418,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             Center(
               child: ElevatedButton(
-                onPressed: editProfile,
+                onPressed: () {},
                 child: const Text("Edit Profile"),
               ),
             ),
@@ -968,7 +818,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     if (value == 'delete') {
                                       // Call function to delete the trip photo from the UI and DB
                                       deleteTripPhoto(tripPhotos[index],
-                                          userData['userName']);
+                                          userData['userName'], index);
                                     }
                                   },
                                   shape: RoundedRectangleBorder(

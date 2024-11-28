@@ -1,34 +1,71 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/admin/screens/messageScreen/sent_message_screen.dart';
+import 'package:flutter_application_1/admin/screens/usersScreen/postScreen/post_dettails_screen.dart';
+import 'package:flutter_application_1/data/removedusers.dart';
+import 'package:flutter_application_1/data/users.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../users.dart';
-import 'post_details_screen.dart';
 
-void main() => runApp(MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: UsersDetailsPage(username: 'aswanth123'), // Pass the username here
-    ));
-
-class UsersDetailsPage extends StatefulWidget {
+class UserProfilePage extends StatefulWidget {
   final String username;
 
-  UsersDetailsPage({required this.username});
+  bool isRemoved;
+
+  UserProfilePage({required this.username, required this.isRemoved});
 
   @override
-  _UserDetailsPageState createState() => _UserDetailsPageState();
+  _UserProfilePageState createState() => _UserProfilePageState();
 }
 
-class _UserDetailsPageState extends State<UsersDetailsPage> {
+class _UserProfilePageState extends State<UserProfilePage> {
   bool showPosts = true; // Initially, show posts
 
   /// Fetches user data based on the username
   Map<String, dynamic>? getUserData() {
     try {
+      // First, try to find the user in the `users` list
       return users.firstWhere((user) => user['userName'] == widget.username);
     } catch (e) {
-      return null; // Handle the case where no user is found
+      // If not found in `users`, look in `removedusers`
+      try {
+        return removedusers
+            .firstWhere((user) => user['userName'] == widget.username);
+      } catch (e) {
+        return null; // Handle the case where no user is found in either list
+      }
     }
+  }
+
+  void removeUser(String userName) {
+    setState(() {
+      final user = users.firstWhere(
+        (user) => user['userName'] == userName,
+        orElse: () => {},
+      );
+      if (user.isNotEmpty) {
+        print("Removing user: $userName");
+        users.remove(user);
+        removedusers.add(user);
+        widget.isRemoved = true; // Update the isRemoved state
+      }
+    });
+  }
+
+  void addUser(String userName) {
+    setState(() {
+      final user = removedusers.firstWhere(
+        (user) => user['userName'] == userName,
+        orElse: () => {},
+      );
+      if (user.isNotEmpty) {
+        print("Adding user: $userName");
+        removedusers.remove(user);
+        users.add(user);
+        widget.isRemoved = false; // Update the isRemoved state
+      }
+    });
   }
 
   @override
@@ -58,18 +95,41 @@ class _UserDetailsPageState extends State<UsersDetailsPage> {
     final List<dynamic> userPosts = userData['userPosts'] ?? [];
     final List<dynamic> tripPhotos = userData['tripPhotos'] ?? [];
 
+    void deletePost(String postId, String username) {
+      print("username : $username postId : $postId");
+      // Remove post from the UI
+      setState(() {
+        userPosts.removeWhere((post) => post['postId'] == postId);
+      });
+    }
+
+    void deleteTripPhoto(String photoPath, String username, int index) {
+      // Remove the photo from the UI
+      setState(() {
+        tripPhotos.remove(photoPath);
+      });
+
+      // Call your backend function to delete the photo from the database
+      // Your function to delete the trip photo from the database goes here
+      print('Deleted trip photo: $photoPath by $username in $index');
+    }
+
     // Count completed and total posts
     int totalPosts = userPosts.length;
     int completedPosts =
         userPosts.where((post) => post['tripCompleted']).length;
 
     return Scaffold(
-      backgroundColor: userData['userGender']?.toLowerCase() == 'female'
-          ? Color.fromRGBO(254, 244, 255, 1) // Pinkish color for female
-          : userData['userGender']?.toLowerCase() == 'male'
-              ? Color.fromRGBO(220, 240, 255, 1) // Light blue color for male
-              : const Color.fromARGB(
-                  255, 242, 255, 255), // Default color if not female or male
+      backgroundColor: widget.isRemoved
+          ? Colors.red.shade100 // If the widget is removed, use red shade
+          : userData['userGender']?.toLowerCase() == 'female'
+              ? Color.fromRGBO(254, 244, 255, 1) // Pinkish color for female
+              : userData['userGender']?.toLowerCase() == 'male'
+                  ? Color.fromRGBO(
+                      220, 240, 255, 1) // Light blue color for male
+                  : const Color.fromARGB(255, 242, 255,
+                      255), // Default color if not female or male
+      // Default color if not female or male
       appBar: AppBar(
         title: Text(userData['userName']),
       ),
@@ -344,24 +404,55 @@ class _UserDetailsPageState extends State<UsersDetailsPage> {
 
                   const SizedBox(height: 4),
 
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: Center(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            final userData = getUserData();
+                            if (userData != null) {
+                              if (widget.isRemoved) {
+                                addUser(userData['userName']);
+                              } else {
+                                removeUser(userData['userName']);
+                              }
+                            }
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              widget.isRemoved ? Colors.green : Colors.red,
+                        ),
+                        child: Text(
+                          widget.isRemoved ? "Add" : "Remove",
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+
                   // Chat Button
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      minimumSize:
-                          Size(double.infinity, 50), // Increase button width
-                      side: BorderSide(
-                          color: Colors.black, width: 1), // Black border
-                    ),
+                        minimumSize:
+                            Size(double.infinity, 50), // Increase button width
+                        side: BorderSide(color: Colors.black, width: 1),
+                        backgroundColor: Colors.green[100] // Black border
+                        ),
                     onPressed: () {
+                      // Sample token
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              ChatPage(username: userData['userName']),
+                          builder: (context) => SentMessagePage(
+                            userNameFromPreviousPage: userData['userName'],
+                            disableSendToAll: true, // Disable the switch
+                          ),
                         ),
                       );
                     },
-                    child: const Text('Chat'),
+                    child: const Text('Message'),
                   ),
                 ],
               ),
@@ -430,6 +521,9 @@ class _UserDetailsPageState extends State<UsersDetailsPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
+                          SizedBox(
+                            height: 50,
+                          ),
                           // Larger emoji 🚫
                           Text(
                             '🚫',
@@ -505,38 +599,107 @@ class _UserDetailsPageState extends State<UsersDetailsPage> {
                               children: [
                                 // Image at the top
                                 ClipRRect(
-                                  borderRadius: BorderRadius.circular(
-                                      12), // Match the container's radius
-                                  child: Image.asset(
-                                    post['locationImages'][0],
-                                    fit: BoxFit.cover,
-                                    height:
-                                        100, // Set a fixed height for the image
-                                    width: double.infinity,
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Stack(
+                                    children: [
+                                      Image.asset(
+                                        post['locationImages'][0],
+                                        fit: BoxFit.cover,
+                                        height: 110,
+                                        width: double.infinity,
+                                      ),
+                                      // Three-dot menu in top right corner
+                                      Positioned(
+                                        top: 0,
+                                        right: 0,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.white.withOpacity(
+                                                0.2), // Semi-transparent background
+                                            borderRadius: BorderRadius.circular(
+                                                20), // Rounded corners for the container
+                                          ),
+                                          child: PopupMenuButton<String>(
+                                            icon: Icon(
+                                              Icons.more_vert,
+                                              color: Colors
+                                                  .black, // Icon color set to black for contrast
+                                            ),
+                                            onSelected: (value) {
+                                              if (value == 'delete') {
+                                                deletePost(post['postId'],
+                                                    userData['userName']);
+                                              }
+                                            },
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(
+                                                  6), // Rounded corners for the menu
+                                            ),
+                                            color: Colors.grey[
+                                                800], // Dark background for the menu
+                                            elevation:
+                                                6, // Slight shadow effect for the menu
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 16,
+                                                vertical:
+                                                    10), // Padding for menu items
+                                            itemBuilder:
+                                                (BuildContext context) => [
+                                              PopupMenuItem<String>(
+                                                value: 'delete',
+                                                child: Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons.delete,
+                                                      color: Colors
+                                                          .red, // Red color for delete option
+                                                    ),
+                                                    SizedBox(
+                                                        width:
+                                                            8), // Space between the icon and text
+                                                    Text(
+                                                      'Delete',
+                                                      style: TextStyle(
+                                                        color: Colors
+                                                            .white, // White text for better contrast
+                                                        fontWeight: FontWeight
+                                                            .bold, // Bold text for emphasis
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
+
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                        CrossAxisAlignment.center,
                                     children: [
-                                      // Location text
-                                      Text(
-                                        post['tripLocation'],
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,fontSize: 10, ),
-                                      ),
-                                      // "Completed" status text
-                                      Text(
-                                        'Completed: ${(post['tripCompleted'] ?? false) ? '✔️' : '❌'}',
-                                        style: TextStyle(
-                                          fontSize:
-                                              12, // Font size for "Completed"
+                                      Center(
+                                        child: Text(
+                                          post['tripLocation'],
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 15,
+                                          ),
                                         ),
                                       ),
+                                      //Text(
+                                      //'Completed: ${(post['tripCompleted'] ?? false) ? '✔️' : '❌'}',
+                                      //  style: TextStyle(
+                                      //    fontSize:
+                                      //         12, // Font size for "Completed"
+                                      //   ),
+                                      // ),
                                       if (post['tripCompleted'] ?? false)
-                                        // Rating bar (only visible if completed)
                                         RatingBar.builder(
                                           initialRating:
                                               post['tripRating'] ?? 0,
@@ -546,10 +709,8 @@ class _UserDetailsPageState extends State<UsersDetailsPage> {
                                           allowHalfRating: true,
                                           itemCount: 5,
                                           itemBuilder: (context, _) =>
-                                              const Icon(
-                                            Icons.star,
-                                            color: Colors.yellow,
-                                          ),
+                                              const Icon(Icons.star,
+                                                  color: Colors.yellow),
                                           onRatingUpdate: (rating) {
                                             print(rating);
                                           },
@@ -575,6 +736,9 @@ class _UserDetailsPageState extends State<UsersDetailsPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
+                          SizedBox(
+                            height: 50,
+                          ),
                           Text(
                             '🚫',
                             style: TextStyle(
@@ -598,15 +762,15 @@ class _UserDetailsPageState extends State<UsersDetailsPage> {
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: 8,
-                        mainAxisSpacing: 8,
+                        crossAxisCount: 3, // Three images per row
+                        crossAxisSpacing: 8, // Horizontal space between items
+                        mainAxisSpacing: 8, // Vertical space between items
                       ),
                       itemCount: tripPhotos.length,
                       itemBuilder: (context, index) {
                         return GestureDetector(
                           onTap: () {
-                            // Show the overlay with the clicked image
+                            // Show the image in a dialog when clicked
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
@@ -618,7 +782,7 @@ class _UserDetailsPageState extends State<UsersDetailsPage> {
                                         child: Image.asset(
                                           tripPhotos[index],
                                           fit: BoxFit
-                                              .contain, // Ensure the image maintains its aspect ratio
+                                              .contain, // Ensures full image fits without cropping
                                           width:
                                               MediaQuery.of(context).size.width,
                                           height: MediaQuery.of(context)
@@ -627,19 +791,16 @@ class _UserDetailsPageState extends State<UsersDetailsPage> {
                                         ),
                                       ),
                                       Positioned(
-                                        top:
-                                            5, // Position the X a bit above the image
-                                        right: 5, // Right side position
+                                        top: 5,
+                                        right: 5,
                                         child: GestureDetector(
                                           onTap: () {
-                                            Navigator.of(context)
-                                                .pop(); // Close the dialog
+                                            Navigator.of(context).pop();
                                           },
                                           child: Icon(
                                             Icons.close,
                                             color: Colors.white,
-                                            size:
-                                                40, // Increase size for better visibility
+                                            size: 40,
                                           ),
                                         ),
                                       ),
@@ -649,9 +810,70 @@ class _UserDetailsPageState extends State<UsersDetailsPage> {
                               },
                             );
                           },
-                          child: Image.asset(
-                            tripPhotos[index],
-                            fit: BoxFit.cover,
+                          child: Stack(
+                            children: [
+                              // Here we set BoxFit.cover to zoom the image to fill the grid cell
+                              Image.asset(
+                                tripPhotos[index],
+                                fit: BoxFit
+                                    .cover, // Ensures image fills the grid space, zooming if needed
+                                width: double
+                                    .infinity, // Makes image stretch to fit the container width
+                                height: double
+                                    .infinity, // Makes image stretch to fit the container height
+                              ),
+                              // Three-dot menu for delete option
+                              Positioned(
+                                top: 5,
+                                right: 5,
+                                child: PopupMenuButton<String>(
+                                  icon: Icon(Icons.more_vert,
+                                      color: Colors
+                                          .white), // Icon color set to white
+                                  onSelected: (value) {
+                                    if (value == 'delete') {
+                                      // Call function to delete the trip photo from the UI and DB
+                                      deleteTripPhoto(tripPhotos[index],
+                                          userData['userName'], index);
+                                    }
+                                  },
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        8.0), // Rounded corners for the menu
+                                  ),
+                                  color: Colors.grey[
+                                      800], // Background color for the menu
+                                  elevation: 8, // Shadow for a raised effect
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 8), // Padding for items
+                                  itemBuilder: (BuildContext context) => [
+                                    PopupMenuItem<String>(
+                                      value: 'delete',
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.delete,
+                                              color: Colors
+                                                  .red), // Icon with red color for delete action
+                                          SizedBox(
+                                              width:
+                                                  8), // Space between icon and text
+                                          Text(
+                                            'Delete',
+                                            style: TextStyle(
+                                              color: Colors
+                                                  .white, // Text color set to white
+                                              fontWeight:
+                                                  FontWeight.bold, // Bold text
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         );
                       },

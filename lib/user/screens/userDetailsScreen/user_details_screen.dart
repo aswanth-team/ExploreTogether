@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../postScreen/post_details_screen.dart';
+import 'package:flutter_application_1/user/screens/postScreen/post_details_screen.dart';
+import 'package:flutter_application_1/data/users.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../../users.dart';
 
 void main() => runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
